@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:komunity/auth/LoginScreen.dart';
+import 'package:komunity/auth/RegisterScreen.dart';
 import 'package:komunity/components/Button.dart';
 
-class DobrodosliScreen extends StatefulWidget {
-  static const String routeName = '/DobrodosliScreen';
+class WelcomeScreen extends StatefulWidget {
+  static const String routeName = '/WelcomeScreen';
 
-  const DobrodosliScreen({super.key});
+  const WelcomeScreen({super.key});
 
   @override
-  State<DobrodosliScreen> createState() => _DobrodosliscreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _DobrodosliscreenState extends State<DobrodosliScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
@@ -22,7 +24,7 @@ class _DobrodosliscreenState extends State<DobrodosliScreen> {
           children: [
             Column(
               children: [
-                SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.03),
+                SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.07),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 35),
                   child: ClipRRect(
@@ -69,7 +71,27 @@ class _DobrodosliscreenState extends State<DobrodosliScreen> {
                     visina: 16,
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     isBorder: false,
-                    funkcija: () {},
+                    funkcija: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 500),
+                          reverseTransitionDuration: const Duration(milliseconds: 500),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(-1, 0),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                              ),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (context, animation, duration) => RegisterScreen(),
+                        ),
+                      );
+                    },
                     isFullWidth: true,
                   ),
                   SizedBox(height: 25),
@@ -80,7 +102,27 @@ class _DobrodosliscreenState extends State<DobrodosliScreen> {
                     backgroundColor: Theme.of(context).colorScheme.secondary,
                     isBorder: true,
                     textColor: Colors.black,
-                    funkcija: () {},
+                    funkcija: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          transitionDuration: const Duration(milliseconds: 500),
+                          reverseTransitionDuration: const Duration(milliseconds: 500),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(-1, 0),
+                                end: Offset.zero,
+                              ).animate(
+                                CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                              ),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (context, animation, duration) => LoginScreen(),
+                        ),
+                      );
+                    },
                     isFullWidth: true,
                   ),
                   SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.09),
@@ -99,6 +141,7 @@ class _DobrodosliscreenState extends State<DobrodosliScreen> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 10),
                 ],
               ),
             ),

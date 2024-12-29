@@ -34,6 +34,16 @@ class Button extends StatelessWidget {
           horizontal: sirina == null ? 0 : sirina!,
         ),
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.8),
+              // color: Colors.black,
+              offset: Offset(1, 2),
+              blurRadius: 4,
+              spreadRadius: -3,
+              blurStyle: BlurStyle.normal,
+            ),
+          ],
           color: backgroundColor,
           border: Border.all(
             color: isBorder ? Theme.of(context).primaryColor : Colors.transparent,

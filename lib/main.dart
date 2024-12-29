@@ -1,100 +1,90 @@
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:komunity/auth/DobrodosliScreen.dart';
+import 'package:komunity/MojProvider.dart';
+import 'package:komunity/auth/WelcomeScreen.dart';
 import 'package:komunity/auth/LoginScreen.dart';
 import 'package:komunity/auth/RegisterScreen.dart';
+import 'package:komunity/firebase_options.dart';
+import 'package:komunity/main/BottomNavigationBar.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(
-      DevicePreview(
-        enabled: false,
-        builder: (context) => MyApp(),
-      ),
-    );
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+    DevicePreview(
+      enabled: false,
+      builder: (context) => MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFFD9F0FF),
-        primaryColor: Color(0xFF2C3160),
-        colorScheme: ThemeData().colorScheme.copyWith(
-              primary: Color(0xFF2C3160),
-              secondary: Color(0xFF91BFDD),
-              tertiary: Color(0xFF0097FD),
-            ),
-        textTheme: TextTheme(
-          displayLarge: TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 36,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-          headlineLarge: TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 24,
-            color: Colors.black,
-          ),
-          headlineMedium: TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 20,
-            color: Colors.black,
-          ),
-          labelLarge: TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 16,
-            color: Colors.black,
-          ),
-          titleLarge: TextStyle(
-            fontFamily: 'Lato',
-            fontSize: 12,
-            color: Colors.black,
-          ),
-        ),
-      ),
-      title: 'KomUnity',
-      home: RegisterScreen(),
+    SystemChrome.setPreferredOrientations(
+      [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ],
+    );
+    return ChangeNotifierProvider(
+      create: (ctx) => MojProvider(),
+      child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          initialData: FirebaseAuth.instance.currentUser,
+          builder: (context, snapshot) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                scaffoldBackgroundColor: Color(0xFFD9F0FF),
+                primaryColor: Color(0xFF2C3160),
+                colorScheme: ThemeData().colorScheme.copyWith(
+                      primary: Color(0xFF2C3160),
+                      secondary: Color(0xFF91BFDD),
+                      tertiary: Color(0xFF0097FD),
+                    ),
+                textTheme: TextTheme(
+                  displayLarge: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 36,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  headlineLarge: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 24,
+                    color: Colors.black,
+                  ),
+                  headlineMedium: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 20,
+                    color: Colors.black,
+                  ),
+                  labelLarge: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                  titleLarge: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 12,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              title: 'KomUnity',
+              home: snapshot.data == null ? const WelcomeScreen() : const BottomNavigationBarScreen(),
+            );
+          }),
     );
   }
 }
-
-// class MyHomePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: SafeArea(
-//         child: Center(
-//           child: Column(
-//             children: [
-//               Text(
-//                 'KomUnity',
-//                 style: Theme.of(context).textTheme.displayLarge,
-//               ),
-//               Icon(
-//                 LucideIcons.heartHandshake,
-//               ),
-//               //   Image.asset("assets/icons/Logo.png"),
-//               //   Container(
-//               //     child:
-//               //     height: 100,
-//               //     width: 100,
-//               //   ),
-//               Container(
-//                 decoration: BoxDecoration(
-//                   boxShadow: [],
-//                 ),
-//                 child: SvgPicture.asset(
-//                   "assets/icons/LogoZnakSenka.svg",
-//                   height: 100,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
