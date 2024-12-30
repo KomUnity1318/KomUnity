@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:komunity/MojProvider.dart';
+import 'package:komunity/auth/LocationScreen.dart';
 import 'package:komunity/auth/LoginScreen.dart';
 import 'package:komunity/components/Button.dart';
 import 'package:komunity/components/InputField.dart';
 import 'package:komunity/components/metode.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routeName = '/RegisterScreen';
@@ -94,11 +98,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
       }
 
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _authData['email']!, password: _authData['sifra']!).then((value) async {
+        await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).set({
+          'userId': FirebaseAuth.instance.currentUser!.uid,
+          'email': FirebaseAuth.instance.currentUser!.email,
+          'userName': '${_authData['ime']} ${_authData['prezime']}',
+          'location': {
+            'lat': '',
+            'long': '',
+          }
+        });
+        LatLng currentPosition = LatLng(0, 0);
+        await Provider.of<MojProvider>(context, listen: false).setCurrentPosition().then((valuE) {
+          currentPosition = Provider.of<MojProvider>(context, listen: false).getCurrentPosition;
+        });
         await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}').then((value) {
           setState(() {
             isLoading = false;
           });
-          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              transitionDuration: const Duration(milliseconds: 500),
+              reverseTransitionDuration: const Duration(milliseconds: 500),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(-1, 0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                  ),
+                  child: child,
+                );
+              },
+              pageBuilder: (context, animation, duration) => LocationScreen(
+                currentPosition: currentPosition,
+              ),
+            ),
+          );
         });
       });
     } on FirebaseAuthException catch (error) {
@@ -107,7 +144,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       Metode.showErrorDialog(
         isJednoPoredDrugog: false,
-        message: Metode.getMessageFromErrorCode(error),
+        message: '$error',
+        // message: Metode.getMessageFromErrorCode(error),
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
@@ -121,7 +159,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       Metode.showErrorDialog(
         isJednoPoredDrugog: false,
-        message: 'Došlo je do greške',
+        message: '$error',
+        // message: 'Došlo je do greške',
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
@@ -424,7 +463,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     pass2Node.unfocus();
                                     _register();
                                   },
-                                  isFullWidth: true,
                                 ),
                         ],
                       ),

@@ -7,9 +7,10 @@ class Button extends StatelessWidget {
   final double visina;
   final double? fontsize;
   final double? sirina;
+  final double okoTeksta;
   final double borderRadius;
   final Function funkcija;
-  final bool isFullWidth;
+  final Widget? icon;
 
   Button({
     required this.buttonText,
@@ -21,7 +22,8 @@ class Button extends StatelessWidget {
     this.fontsize,
     this.sirina,
     this.textColor = Colors.white,
-    required this.isFullWidth,
+    this.icon,
+    this.okoTeksta = 0,
   });
 
   @override
@@ -29,15 +31,15 @@ class Button extends StatelessWidget {
     return GestureDetector(
       onTap: () => funkcija(),
       child: Container(
+        width: sirina,
         padding: EdgeInsets.symmetric(
           vertical: visina,
-          horizontal: sirina == null ? 0 : sirina!,
+          horizontal: okoTeksta,
         ),
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.8),
-              // color: Colors.black,
               offset: Offset(1, 2),
               blurRadius: 4,
               spreadRadius: -3,
@@ -50,25 +52,21 @@ class Button extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        child: isFullWidth
-            ? Center(
-                child: Text(
-                  buttonText,
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        // fontWeight: FontWeight.w600,
-                        fontSize: fontsize ?? 20,
-                        color: textColor,
-                      ),
-                ),
-              )
-            : Text(
-                buttonText,
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      // fontWeight: FontWeight.w600,
-                      fontSize: fontsize ?? 20,
-                      color: textColor,
-                    ),
-              ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) icon!,
+            if (icon != null) const SizedBox(width: 10),
+            Text(
+              buttonText,
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    // fontWeight: FontWeight.w600,
+                    fontSize: fontsize ?? 20,
+                    color: textColor,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }

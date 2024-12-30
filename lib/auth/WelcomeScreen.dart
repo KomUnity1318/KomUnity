@@ -92,7 +92,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       );
                     },
-                    isFullWidth: true,
                   ),
                   SizedBox(height: 25),
                   Button(
@@ -123,7 +122,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       );
                     },
-                    isFullWidth: true,
                   ),
                   SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.09),
                   Row(

@@ -289,7 +289,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           sifraNode.unfocus();
                           _login();
                         },
-                        isFullWidth: true,
                       ),
                 Column(
                   children: [

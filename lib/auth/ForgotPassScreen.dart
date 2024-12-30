@@ -58,7 +58,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       isBorder: true,
                       textColor: Colors.black,
                       funkcija: () {},
-                      isFullWidth: true,
                     ),
                   ],
                 ),
