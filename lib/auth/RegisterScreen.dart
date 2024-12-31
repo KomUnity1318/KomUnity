@@ -26,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'ime': '',
     'prezime': '',
     'email': '',
+    'broj': '',
     'sifra': '',
   };
 
@@ -34,6 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final imeNode = FocusNode();
   final prezimeNode = FocusNode();
   final emailNode = FocusNode();
+  final brojNode = FocusNode();
   final pass1Node = FocusNode();
   final pass2Node = FocusNode();
 
@@ -50,6 +52,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() {});
     });
     emailNode.addListener(() {
+      setState(() {});
+    });
+    brojNode.addListener(() {
       setState(() {});
     });
     pass2Node.addListener(() {
@@ -76,6 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
     _form.currentState!.save();
+
     try {
       setState(() {
         isLoading = true;
@@ -102,6 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'userId': FirebaseAuth.instance.currentUser!.uid,
           'email': FirebaseAuth.instance.currentUser!.email,
           'userName': '${_authData['ime']} ${_authData['prezime']}',
+          'broj': _authData['broj'],
           'location': {
             'lat': '',
             'long': '',
@@ -144,8 +151,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       Metode.showErrorDialog(
         isJednoPoredDrugog: false,
-        message: '$error',
-        // message: Metode.getMessageFromErrorCode(error),
+        // message: '$error',
+        message: Metode.getMessageFromErrorCode(error),
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
@@ -159,8 +166,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       Metode.showErrorDialog(
         isJednoPoredDrugog: false,
-        message: '$error',
-        // message: 'Došlo je do greške',
+        // message: '$error',
+        message: 'Došlo je do greške',
         context: context,
         naslov: 'Greška',
         button1Text: 'Zatvori',
@@ -210,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             isMargin: false,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
-                              if (emailNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
+                              if (emailNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus || brojNode.hasFocus) {
                                 return null;
                               } else if (value!.isEmpty) {
                                 return 'Molimo Vas da unesete ime';
@@ -244,7 +251,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             isMargin: false,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
-                              if (imeNode.hasFocus || emailNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
+                              if (imeNode.hasFocus || emailNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus || brojNode.hasFocus) {
                                 return null;
                               } else if (value!.isEmpty) {
                                 return 'Molimo Vas da unesete prezime';
@@ -278,7 +285,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             obscureText: false,
                             onChanged: (_) => _form.currentState!.validate(),
                             validator: (value) {
-                              if (imeNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus) {
+                              if (imeNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus || brojNode.hasFocus) {
                                 return null;
                               } else if (value!.isEmpty) {
                                 return 'Molimo Vas da unesete email adresu';
@@ -291,76 +298,103 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.005,
-                                    left: medijakveri.size.width * 0.02,
-                                  ),
-                                  child: Text(
-                                    'Šifra',
-                                    style: Theme.of(context).textTheme.headlineMedium,
-                                  ),
+                          InputField(
+                            isLabel: true,
+                            label: "Broj telefona",
+                            focusNode: brojNode,
+                            medijakveri: medijakveri,
+                            hintText: "068123456",
+                            inputAction: TextInputAction.next,
+                            inputType: TextInputType.phone,
+                            kapitulacija: TextCapitalization.none,
+                            borderRadijus: 10,
+                            visina: 18,
+                            isMargin: false,
+                            obscureText: false,
+                            onChanged: (_) => _form.currentState!.validate(),
+                            validator: (value) {
+                              if (imeNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || pass2Node.hasFocus || emailNode.hasFocus) {
+                                return null;
+                              } else if (value!.isEmpty) {
+                                return 'Molimo Vas da unesete broj telefona';
+                              } else if (!value.contains(RegExp(r"^06\d{7}$"))) {
+                                // return '${!value.contains(RegExp(r"^06\d{7}$"))}';
+                                return 'Molimo Vas unesite validan broj telefona';
+                              }
+                            },
+                            onSaved: (value) {
+                              _authData['broj'] = value!.trim();
+                            },
+                          ),
+                          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                  bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.005,
+                                  left: medijakveri.size.width * 0.02,
                                 ),
-                                TextFormField(
-                                  focusNode: pass1Node,
-                                  keyboardType: TextInputType.text,
-                                  textInputAction: TextInputAction.next,
-                                  obscureText: isPassHidden,
-                                  controller: _passwordController,
-                                  onFieldSubmitted: (_) {
-                                    FocusScope.of(context).requestFocus(pass2Node);
-                                  },
-                                  onChanged: (_) => _form.currentState!.validate(),
-                                  validator: (value) {
-                                    if (imeNode.hasFocus || prezimeNode.hasFocus || emailNode.hasFocus || pass2Node.hasFocus) {
-                                      return null;
-                                    } else if (value!.isEmpty || !value.contains(RegExp(r'[A-Za-z]'))) {
-                                      return 'Molimo Vas unesite šifru';
-                                    } else if (value.length < 5) {
-                                      return 'Šifra mora imati više od 4 karaktera';
-                                    } else if (value.length > 50) {
-                                      return 'Šifra mora imati manje od 50 karaktera';
-                                    } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
-                                      return 'Šifra nije validna';
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: 'Šifra',
-                                    hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                          color: Colors.grey,
-                                          fontSize: 16,
-                                        ),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                        color: Theme.of(context).colorScheme.tertiary,
+                                child: Text(
+                                  'Šifra',
+                                  style: Theme.of(context).textTheme.headlineMedium,
+                                ),
+                              ),
+                              TextFormField(
+                                focusNode: pass1Node,
+                                keyboardType: TextInputType.text,
+                                textInputAction: TextInputAction.next,
+                                obscureText: isPassHidden,
+                                controller: _passwordController,
+                                onFieldSubmitted: (_) {
+                                  FocusScope.of(context).requestFocus(pass2Node);
+                                },
+                                onChanged: (_) => _form.currentState!.validate(),
+                                validator: (value) {
+                                  if (imeNode.hasFocus || prezimeNode.hasFocus || emailNode.hasFocus || pass2Node.hasFocus || brojNode.hasFocus) {
+                                    return null;
+                                  } else if (value!.isEmpty || !value.contains(RegExp(r'[A-Za-z]'))) {
+                                    return 'Molimo Vas unesite šifru';
+                                  } else if (value.length < 5) {
+                                    return 'Šifra mora imati više od 4 karaktera';
+                                  } else if (value.length > 50) {
+                                    return 'Šifra mora imati manje od 50 karaktera';
+                                  } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
+                                    return 'Šifra nije validna';
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Šifra',
+                                  hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                        color: Colors.grey,
+                                        fontSize: 16,
                                       ),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide(
+                                      color: Theme.of(context).colorScheme.tertiary,
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(color: Color(0xFF91BFDD)),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderSide: const BorderSide(color: Colors.white),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    suffixIcon: pass1Node.hasFocus
-                                        ? IconButton(
-                                            onPressed: () => changePassVisibility(),
-                                            icon: isPassHidden ? const Icon(LucideIcons.eye) : const Icon(LucideIcons.eyeOff),
-                                          )
-                                        : null,
                                   ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(color: Color(0xFF91BFDD)),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderSide: const BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  suffixIcon: pass1Node.hasFocus
+                                      ? IconButton(
+                                          onPressed: () => changePassVisibility(),
+                                          icon: isPassHidden ? const Icon(LucideIcons.eye) : const Icon(LucideIcons.eyeOff),
+                                        )
+                                      : null,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
                           Container(
@@ -385,7 +419,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   obscureText: isPassHidden2,
                                   onChanged: (_) => _form.currentState!.validate(),
                                   validator: (value) {
-                                    if (imeNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || emailNode.hasFocus) {
+                                    if (imeNode.hasFocus || prezimeNode.hasFocus || pass1Node.hasFocus || emailNode.hasFocus || brojNode.hasFocus) {
                                       return null;
                                     } else if (value!.isEmpty) {
                                       return 'Molimo Vas unesite šifru';
@@ -513,6 +547,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     pass1Node.dispose();
     pass2Node.dispose();
     imeNode.dispose();
+    brojNode.dispose();
     prezimeNode.dispose();
     emailNode.dispose();
   }

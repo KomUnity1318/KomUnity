@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Metode {
@@ -240,6 +242,34 @@ class Metode {
       default:
         return "Došlo je do greške. Molimo Vas pokušajte kasnije.";
       // return "${error.code}";
+    }
+  }
+
+  static String timeAgo(t1) {
+    DateTime time1 = DateTime.parse(t1);
+    DateTime time2 = DateTime.now();
+
+    var sekunde1 = time1.millisecondsSinceEpoch / 1000;
+    var sekunde2 = time2.millisecondsSinceEpoch / 1000;
+    var sekunde = (sekunde2 - sekunde1);
+    var minuti = sekunde.floor() / 60;
+    var sati = sekunde.floor() / 3600;
+    var dani = sekunde.floor() / 86400;
+    var meseci = sekunde.floor() / 2592000;
+    var godine = sekunde.floor() / 31104000;
+
+    if (godine.floor() != 0) {
+      return '${godine.floor()}g';
+    } else if (meseci.floor() != 0) {
+      return '${meseci.floor()}m';
+    } else if (dani.floor() != 0) {
+      return '${dani.floor()}d';
+    } else if (sati.floor() != 0) {
+      return '${sati.floor()}h';
+    } else if (minuti.floor() != 0) {
+      return '${minuti.floor()}min';
+    } else {
+      return '1min';
     }
   }
 

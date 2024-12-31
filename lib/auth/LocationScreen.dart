@@ -238,7 +238,7 @@ class _LocationScreenState extends State<LocationScreen> {
                       buttonText: 'Potvrdi',
                       borderRadius: 10,
                       visina: 16,
-                      icon: Icon(LucideIcons.circlePlus),
+                      icon: Icon(LucideIcons.circleCheckBig),
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                       textColor: Colors.black,
                       isBorder: true,

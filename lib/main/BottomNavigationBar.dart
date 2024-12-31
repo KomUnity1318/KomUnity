@@ -53,7 +53,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Container(
-          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.07),
+          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
           child: SlideIndexedStack(
             axis: Axis.horizontal,
             slideOffset: 0.5,
@@ -67,8 +67,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             color: Colors.white,
             border: Border(
               top: BorderSide(
-                width: 0.3,
-                color: Color.fromRGBO(176, 176, 176, 1),
+                width: 0.5,
+                color: Color(0xFFB0B0B0),
               ),
             ),
           ),
@@ -77,7 +77,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             onTap: _selectPage,
             type: BottomNavigationBarType.fixed,
             currentIndex: _selectedIndex,
-            iconSize: 30,
+            iconSize: 35,
             selectedLabelStyle: Theme.of(context).textTheme.titleLarge,
             unselectedLabelStyle: Theme.of(context).textTheme.titleLarge,
             selectedItemColor: Theme.of(context).colorScheme.tertiary,

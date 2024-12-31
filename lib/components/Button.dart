@@ -8,6 +8,7 @@ class Button extends StatelessWidget {
   final double? fontsize;
   final double? sirina;
   final double okoTeksta;
+  final double? iconTextRazmak;
   final double borderRadius;
   final Function funkcija;
   final Widget? icon;
@@ -21,6 +22,7 @@ class Button extends StatelessWidget {
     required this.funkcija,
     this.fontsize,
     this.sirina,
+    this.iconTextRazmak,
     this.textColor = Colors.white,
     this.icon,
     this.okoTeksta = 0,
@@ -56,7 +58,7 @@ class Button extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) icon!,
-            if (icon != null) const SizedBox(width: 10),
+            if (icon != null) SizedBox(width: iconTextRazmak ?? 10),
             Text(
               buttonText,
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
