@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:komunity/MojProvider.dart';
 import 'package:komunity/components/Button.dart';
 import 'package:komunity/components/CustomAppbar.dart';
+import 'package:komunity/components/ObjavaCard.dart';
 import 'package:komunity/components/metode.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/HomeScreen';
@@ -17,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool danasFilter = false;
+
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
@@ -50,38 +56,90 @@ class _HomeScreenState extends State<HomeScreen> {
               drugaIkonicaFunkcija: () {},
               isCenter: false,
             ),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.tertiary,
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        danasFilter = true;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: danasFilter ? Theme.of(context).colorScheme.secondary : Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
+                      ),
+                      // height: (medijakveri.size.height - medijakveri.padding.top) * 0.047,
+                      height: 38,
+                      width: 107,
+                      child: Center(
+                        child: Text(
+                          'Danas',
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                color: danasFilter ? Colors.white : Colors.black,
+                              ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                height: 40,
-                width: 200,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        danasFilter = false;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: danasFilter ? Colors.white : Theme.of(context).colorScheme.secondary,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
+                      ),
+                      height: 38,
+                      width: 107,
+                      child: Center(
+                        child: Text(
+                          'Ostalo',
+                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                color: danasFilter ? Colors.black : Colors.white,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
             Container(
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance.collection('posts').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.753,
+                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.76,
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ),
                     );
                   }
 
-                  final objave = snapshot.data!.docs;
-                  if (objave.isEmpty) {
+                  final objaveP = snapshot.data!.docs;
+                  if (objaveP.isEmpty) {
                     return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.753,
+                      height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
                       child: Center(
                         child: Text(
                           'Trenutno nema objava',
@@ -90,129 +148,41 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   }
-                  objave.sort((a, b) {
+                  objaveP.sort((a, b) {
                     if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
                       return 0;
                     } else {
                       return 1;
                     }
                   });
+                  List<QueryDocumentSnapshot<Map<String, dynamic>>> objave = [];
+                  if (danasFilter) {
+                    objaveP.forEach((value) {
+                      if (Metode.timeAgo(value.data()['createdAt']).contains('min') || Metode.timeAgo(value.data()['createdAt']).contains('h')) {
+                        objave.add(value);
+                      }
+                    });
+                  } else {
+                    objave = objaveP;
+                  }
 
                   try {
                     return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.753,
+                      height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
                       child: ListView.builder(
                         itemCount: objave.length,
                         padding: const EdgeInsets.symmetric(vertical: 0),
                         itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 5),
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.8),
-                                  offset: Offset(1, 2),
-                                  blurRadius: 4,
-                                  spreadRadius: -3,
-                                  blurStyle: BlurStyle.normal,
-                                ),
-                              ],
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade400,
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: Icon(
-                                            LucideIcons.squareUser,
-                                            size: 30,
-                                          ),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth: medijakveri.size.width * 0.4,
-                                          ),
-                                          child: FittedBox(
-                                            child: Text(
-                                              '${objave[index].data()['ownerName']}',
-                                              // 'Anes Čoković',
-                                              style: Theme.of(context).textTheme.titleLarge,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 3),
-                                        Text(
-                                          Metode.timeAgo(objave[index].data()['createdAt']),
-                                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                                color: Theme.of(context).colorScheme.tertiary,
-                                              ),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.tertiary,
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Text(
-                                            '#${objave[index].data()['kategorija']}',
-                                            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                                  color: Colors.white,
-                                                ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Icon(
-                                        LucideIcons.ellipsisVertical,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  objave[index].data()['naslov'].toString().length > 30 ? '${objave[index].data()['naslov'].toString().substring(0, 30)}...' : '${objave[index].data()['naslov']}',
-                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  objave[index].data()['opis'].toString().length > 80 ? '${objave[index].data()['opis'].toString().substring(0, 80)}...' : '${objave[index].data()['opis']}',
-                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                        color: Colors.grey,
-                                      ),
-                                ),
-                                Button(
-                                  buttonText: 'Pomogni',
-                                  borderRadius: 8,
-                                  visina: 2,
-                                  sirina: 130,
-                                  iconTextRazmak: 5,
-                                  icon: Icon(LucideIcons.heartHandshake),
-                                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                                  textColor: Colors.black,
-                                  fontsize: 16,
-                                  isBorder: true,
-                                  funkcija: () {},
-                                ),
-                              ],
-                            ),
+                          return ObjavaCard(
+                            naslov: objave[index].data()['naslov'],
+                            opis: objave[index].data()['opis'],
+                            ownerName: objave[index].data()['ownerName'],
+                            ownerId: objave[index].data()['ownerId'],
+                            medijakveri: medijakveri,
+                            createdAt: objave[index].data()['createdAt'],
+                            kategorija: objave[index].data()['kategorija'],
+                            dobrovoljci: objave[index].data()['dobrovoljci'],
+                            objavaId: objave[index].id,
                           );
                         },
                       ),
@@ -230,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
                   return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.753,
+                    height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
                     child: Center(
                       child: Text(
                         'Došlo je do greške',

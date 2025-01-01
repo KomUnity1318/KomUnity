@@ -57,6 +57,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 Text(
                   'Vaša zajednica na dohvat ruke.',
                   style: Theme.of(context).textTheme.headlineLarge,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

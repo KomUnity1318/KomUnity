@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:komunity/main/AccountScreen.dart';
 import 'package:komunity/main/AddScreen.dart';
 import 'package:komunity/main/HomeScreen.dart';
@@ -77,23 +78,25 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             onTap: _selectPage,
             type: BottomNavigationBarType.fixed,
             currentIndex: _selectedIndex,
+            // iconSize: medijakveri.size.height * 0.0415,
             iconSize: 35,
             selectedLabelStyle: Theme.of(context).textTheme.titleLarge,
             unselectedLabelStyle: Theme.of(context).textTheme.titleLarge,
             selectedItemColor: Theme.of(context).colorScheme.tertiary,
             unselectedItemColor: Theme.of(context).primaryColor,
+            backgroundColor: Colors.white,
             showUnselectedLabels: true,
-            items: const [
+            items: [
               BottomNavigationBarItem(
-                icon: Icon(LucideIcons.house),
+                icon: SvgPicture.asset('assets/icons/house.svg'),
                 label: 'Početna',
               ),
               BottomNavigationBarItem(
-                icon: Icon(LucideIcons.circlePlus),
+                icon: SvgPicture.asset('assets/icons/circlePlus.svg'),
                 label: 'Dodaj',
               ),
               BottomNavigationBarItem(
-                icon: Icon(LucideIcons.squareUser),
+                icon: SvgPicture.asset('assets/icons/squareUser.svg'),
                 label: 'Nalog',
               ),
             ],
