@@ -197,7 +197,7 @@ class _AddScreenState extends State<AddScreen> {
                             return 'Molimo Vas unesite naslov';
                           } else if (value.length < 4) {
                             return 'Naslov mora biti duži';
-                          } else if (value.length > 70) {
+                          } else if (value.length > 50) {
                             print(value.length);
                             return 'Naslov mora biti kraći';
                           }

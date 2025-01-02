@@ -58,9 +58,15 @@ class _LocationScreenState extends State<LocationScreen> {
         lokacijaError = 'Molimo Vas izaberite lokaciju.';
       });
     } else {
+      setState(() {
+        isLoading = true;
+      });
       try {
         Metode.checkConnection(context: context);
       } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
         Metode.showErrorDialog(
           isJednoPoredDrugog: false,
           context: context,

@@ -163,7 +163,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                     });
                   } else {
-                    objave = objaveP;
+                    objaveP.forEach((value) {
+                      if (DateTime.parse(value.data()['createdAt']).isAfter(DateTime.now().subtract(Duration(days: 15)))) {
+                        objave.add(value);
+                      }
+                    });
+                    // objave = objaveP;
+                  }
+                  if (objave.isEmpty) {
+                    return Container(
+                      height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
+                      child: Center(
+                        child: Text(
+                          'Trenutno nema objava',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                      ),
+                    );
                   }
 
                   try {
@@ -182,6 +198,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             createdAt: objave[index].data()['createdAt'],
                             kategorija: objave[index].data()['kategorija'],
                             dobrovoljci: objave[index].data()['dobrovoljci'],
+                            location: objave[index].data()['adresa'],
+                            brojTel: objave[index].data()['broj'],
                             objavaId: objave[index].id,
                           );
                         },

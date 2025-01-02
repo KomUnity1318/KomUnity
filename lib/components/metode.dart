@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Metode {
   static Future<bool> checkConnection({required context}) async {
@@ -12,6 +13,16 @@ class Metode {
       return true;
     } catch (error) {
       return false;
+    }
+  }
+
+  static Future<void> launchInBrowser(String juarel) async {
+    final url = Uri.parse(juarel);
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
     }
   }
 

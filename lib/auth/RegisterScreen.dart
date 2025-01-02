@@ -112,7 +112,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'location': {
             'lat': '',
             'long': '',
-          }
+          },
+          'ratings': {},
         });
         LatLng currentPosition = LatLng(0, 0);
         await Provider.of<MojProvider>(context, listen: false).setCurrentPosition().then((valuE) {
