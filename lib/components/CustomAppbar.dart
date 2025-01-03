@@ -22,10 +22,11 @@ class CustomAppBar extends StatelessWidget {
     final medijakveri = MediaQuery.of(context);
     return isCenter
         ? Container(
+            height: (medijakveri.size.height - medijakveri.padding.top) * 0.07,
             padding: EdgeInsets.only(
-              top: (medijakveri.size.height - medijakveri.padding.top) * 0.035,
-              bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.012,
-            ),
+                // top: (medijakveri.size.height - medijakveri.padding.top) * 0.035,
+                // bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.012,
+                ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

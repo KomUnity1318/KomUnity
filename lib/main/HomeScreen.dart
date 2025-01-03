@@ -124,27 +124,22 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
             Container(
+              height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance.collection('posts').snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.76,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
 
                   final objaveP = snapshot.data!.docs;
                   if (objaveP.isEmpty) {
-                    return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
-                      child: Center(
-                        child: Text(
-                          'Trenutno nema objava',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
+                    return Center(
+                      child: Text(
+                        'Trenutno nema objava',
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                     );
                   }
@@ -171,39 +166,34 @@ class _HomeScreenState extends State<HomeScreen> {
                     // objave = objaveP;
                   }
                   if (objave.isEmpty) {
-                    return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
-                      child: Center(
-                        child: Text(
-                          'Trenutno nema objava',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
+                    return Center(
+                      child: Text(
+                        'Trenutno nema objava',
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                     );
                   }
 
                   try {
-                    return Container(
-                      height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
-                      child: ListView.builder(
-                        itemCount: objave.length,
-                        padding: const EdgeInsets.symmetric(vertical: 0),
-                        itemBuilder: (context, index) {
-                          return ObjavaCard(
-                            naslov: objave[index].data()['naslov'],
-                            opis: objave[index].data()['opis'],
-                            ownerName: objave[index].data()['ownerName'],
-                            ownerId: objave[index].data()['ownerId'],
-                            medijakveri: medijakveri,
-                            createdAt: objave[index].data()['createdAt'],
-                            kategorija: objave[index].data()['kategorija'],
-                            dobrovoljci: objave[index].data()['dobrovoljci'],
-                            location: objave[index].data()['adresa'],
-                            brojTel: objave[index].data()['broj'],
-                            objavaId: objave[index].id,
-                          );
-                        },
-                      ),
+                    return ListView.builder(
+                      itemCount: objave.length,
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      itemBuilder: (context, index) {
+                        return ObjavaCard(
+                          naslov: objave[index].data()['naslov'],
+                          opis: objave[index].data()['opis'],
+                          ownerName: objave[index].data()['ownerName'],
+                          ownerId: objave[index].data()['ownerId'],
+                          medijakveri: medijakveri,
+                          createdAt: objave[index].data()['createdAt'],
+                          kategorija: objave[index].data()['kategorija'],
+                          dobrovoljci: objave[index].data()['dobrovoljci'],
+                          location: objave[index].data()['adresa'],
+                          brojTel: objave[index].data()['broj'],
+                          objavaId: objave[index].id,
+                          ownerProfileClick: true,
+                        );
+                      },
                     );
                   } catch (e) {
                     Metode.showErrorDialog(
@@ -217,13 +207,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       isButton2: false,
                     );
                   }
-                  return Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
-                    child: Center(
-                      child: Text(
-                        'Došlo je do greške',
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
+                  return Center(
+                    child: Text(
+                      'Došlo je do greške',
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   );
                 },

@@ -35,6 +35,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
       FocusManager.instance.primaryFocus?.unfocus();
 
       _selectedIndex = index;
+      print(_selectedIndex);
     });
     // try {
     //   await InternetAddress.lookup('google.com').then((value) {
@@ -88,15 +89,15 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             showUnselectedLabels: true,
             items: [
               BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/icons/house.svg'),
+                icon: _selectedIndex == 0 ? SvgPicture.asset('assets/icons/HouseSelected.svg') : SvgPicture.asset('assets/icons/House.svg'),
                 label: 'Početna',
               ),
               BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/icons/circlePlus.svg'),
+                icon: _selectedIndex == 1 ? SvgPicture.asset('assets/icons/CirclePlusSelected.svg') : SvgPicture.asset('assets/icons/CirclePlus.svg'),
                 label: 'Dodaj',
               ),
               BottomNavigationBarItem(
-                icon: SvgPicture.asset('assets/icons/squareUser.svg'),
+                icon: _selectedIndex == 2 ? SvgPicture.asset('assets/icons/SquareUserSelected.svg') : SvgPicture.asset('assets/icons/SquareUser.svg'),
                 label: 'Nalog',
               ),
             ],

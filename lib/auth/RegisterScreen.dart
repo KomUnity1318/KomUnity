@@ -236,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _authData['ime'] = value!.trim();
                             },
                           ),
-                          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+                          SizedBox(height: 15),
                           InputField(
                             isLabel: true,
                             label: "Prezime",
@@ -270,7 +270,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _authData['prezime'] = value!.trim();
                             },
                           ),
-                          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+                          SizedBox(height: 15),
                           InputField(
                             isLabel: true,
                             label: "Email",
@@ -298,7 +298,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _authData['email'] = value!.trim();
                             },
                           ),
-                          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+                          SizedBox(height: 15),
                           InputField(
                             isLabel: true,
                             label: "Broj telefona",
@@ -327,7 +327,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _authData['broj'] = value!.trim();
                             },
                           ),
-                          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+                          SizedBox(height: 15),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -397,7 +397,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+                          SizedBox(height: 15),
                           Container(
                             margin: EdgeInsets.only(bottom: (medijakveri.size.height - medijakveri.padding.top) * 0.025),
                             child: Column(

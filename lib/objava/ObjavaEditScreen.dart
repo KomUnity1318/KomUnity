@@ -140,7 +140,7 @@ class _ObjavaEditScreenState extends State<ObjavaEditScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
-            margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
+            margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
             child: SafeArea(
               child: Column(
                 children: [
@@ -259,7 +259,7 @@ class _ObjavaEditScreenState extends State<ObjavaEditScreen> {
                               child: DropdownButton(
                                 value: objavaData['kategorija'],
                                 isExpanded: true,
-                                menuWidth: medijakveri.size.width - (medijakveri.size.width * 0.05),
+                                menuWidth: medijakveri.size.width - (medijakveri.size.width * 0.039),
                                 underline: Container(),
                                 style: Theme.of(context).textTheme.labelLarge,
                                 items: [

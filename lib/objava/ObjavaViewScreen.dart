@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:komunity/MojProvider.dart';
+import 'package:komunity/account/AccountViewUserScreen.dart';
 import 'package:komunity/components/CustomAppbar.dart';
 import 'package:komunity/components/metode.dart';
 import 'package:komunity/objava/ObjavaEditScreen.dart';
@@ -24,6 +25,7 @@ class ObjavaViewScreen extends StatefulWidget {
   final String ownerName;
   final String brojTel;
   final String createdAt;
+  final bool ownerProfileClick;
 
   const ObjavaViewScreen({
     super.key,
@@ -37,6 +39,7 @@ class ObjavaViewScreen extends StatefulWidget {
     required this.location,
     required this.objavaId,
     required this.createdAt,
+    required this.ownerProfileClick,
   });
 
   @override
@@ -102,7 +105,7 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
       body: SingleChildScrollView(
         primary: false,
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
+          margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
           child: SafeArea(
             child: isLoading
                 ? Center(
@@ -262,58 +265,87 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                         ],
                       ),
                       SizedBox(height: 15),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(5),
+                      GestureDetector(
+                        onTap: widget.ownerId != FirebaseAuth.instance.currentUser!.uid
+                            ? widget.ownerProfileClick
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration: const Duration(milliseconds: 500),
+                                        reverseTransitionDuration: const Duration(milliseconds: 500),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          return SlideTransition(
+                                            position: Tween<Offset>(
+                                              begin: const Offset(-1, 0),
+                                              end: Offset.zero,
+                                            ).animate(
+                                              CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                                            ),
+                                            child: child,
+                                          );
+                                        },
+                                        pageBuilder: (context, animation, duration) => AccountViewUserScreen(
+                                          nalogId: widget.ownerId,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                : () {}
+                            : () {},
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Icon(
+                                LucideIcons.squareUser,
+                                size: 50,
+                              ),
                             ),
-                            child: Icon(
-                              LucideIcons.squareUser,
-                              size: 50,
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                constraints: BoxConstraints(
-                                  maxWidth: medijakveri.size.width * 0.4,
-                                ),
-                                child: FittedBox(
-                                  child: Text(
-                                    widget.ownerName,
-                                    style: Theme.of(context).textTheme.headlineMedium,
+                            SizedBox(width: 5),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: medijakveri.size.width * 0.4,
+                                  ),
+                                  child: FittedBox(
+                                    child: Text(
+                                      widget.ownerName,
+                                      style: Theme.of(context).textTheme.headlineMedium,
+                                    ),
                                   ),
                                 ),
+                                SizedBox(width: 3),
+                                Text(
+                                  Metode.timeAgo(widget.createdAt),
+                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(width: 5),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.tertiary,
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              SizedBox(width: 3),
-                              Text(
-                                Metode.timeAgo(widget.createdAt),
-                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                      color: Theme.of(context).colorScheme.tertiary,
+                              child: Text(
+                                '#${widget.kategorija}',
+                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                      color: Colors.white,
                                     ),
                               ),
-                            ],
-                          ),
-                          SizedBox(width: 5),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.tertiary,
-                              borderRadius: BorderRadius.circular(4),
                             ),
-                            child: Text(
-                              '#${widget.kategorija}',
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    color: Colors.white,
-                                  ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       SizedBox(height: 15),
                       Container(
@@ -391,219 +423,213 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                           ),
                           SizedBox(height: 10),
                           Container(
-                            height: (medijakveri.size.height - medijakveri.padding.top) * 0.5,
+                            height: (medijakveri.size.height - medijakveri.padding.top) * 0.515,
                             child: StreamBuilder(
                               stream: FirebaseFirestore.instance.collection('users').snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Container(
-                                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.2,
-                                    child: const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
                                   );
                                 }
-                                final users = snapshot.data!.docs;
+                                List<QueryDocumentSnapshot<Map<String, dynamic>>> users;
+                                users = snapshot.data!.docs;
                                 List<QueryDocumentSnapshot<Map<String, dynamic>>> dobrovoljciProfili = [];
                                 if (widget.dobrovoljci != {}) {
                                   dobrovoljciProfili = users.where((element) => widget.dobrovoljci.containsKey(element['userId'])).toList();
                                 }
                                 if (dobrovoljciProfili.isEmpty) {
-                                  return Container(
-                                    child: Center(
-                                      child: Text(
-                                        'Nema dobrovoljaca',
-                                        style: Theme.of(context).textTheme.headlineMedium,
-                                      ),
+                                  return Center(
+                                    child: Text(
+                                      'Nema dobrovoljaca',
+                                      style: Theme.of(context).textTheme.headlineMedium,
                                     ),
                                   );
                                 }
-                                return Container(
-                                  child: ListView.builder(
-                                    itemCount: dobrovoljciProfili.length,
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          print(dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}']);
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.only(bottom: 5),
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(10),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(0.8),
-                                                offset: Offset(1, 2),
-                                                blurRadius: 4,
-                                                spreadRadius: -3,
-                                                blurStyle: BlurStyle.normal,
-                                              ),
-                                            ],
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey.shade300,
-                                                  borderRadius: BorderRadius.circular(5),
-                                                ),
-                                                child: Icon(
-                                                  LucideIcons.squareUser,
-                                                  size: 65,
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      // dobrovoljciProfili[index].data()['ratings'].values.toString(),
-                                                      dobrovoljciProfili[index].data()['userName'],
-                                                      style: Theme.of(context).textTheme.headlineMedium,
-                                                    ),
-                                                    SizedBox(height: 10),
-                                                    if (widget.ownerId == FirebaseAuth.instance.currentUser!.uid)
-                                                      if (dobrovoljciProfili[index].data()['ratings'].keys.toString().contains('${widget.objavaId}${widget.ownerId}'))
-                                                        Row(
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 1
-                                                                    ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
-                                                                    : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 1, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 1 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 2
-                                                                    ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
-                                                                    : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 2, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 2 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 3
-                                                                    ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
-                                                                    : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 3, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 3 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 4
-                                                                    ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
-                                                                    : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 4, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 4 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 5
-                                                                    ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
-                                                                    : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 5, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 5 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                    if (widget.ownerId == FirebaseAuth.instance.currentUser!.uid)
-                                                      if (!dobrovoljciProfili[index].data()['ratings'].keys.toString().contains('${widget.objavaId}${widget.ownerId}'))
-                                                        Row(
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 1, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 2, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 3, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 4, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 10),
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 5, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
-                                                              },
-                                                              child: SvgPicture.asset(
-                                                                'assets/icons/Star.svg',
-                                                                height: 30,
-                                                                width: 30,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                return ListView.builder(
+                                  itemCount: dobrovoljciProfili.length,
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        print(dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}']);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(bottom: 5),
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.8),
+                                              offset: Offset(1, 2),
+                                              blurRadius: 4,
+                                              spreadRadius: -3,
+                                              blurStyle: BlurStyle.normal,
+                                            ),
+                                          ],
                                         ),
-                                      );
-                                    },
-                                  ),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade300,
+                                                borderRadius: BorderRadius.circular(5),
+                                              ),
+                                              child: Icon(
+                                                LucideIcons.squareUser,
+                                                size: 65,
+                                              ),
+                                            ),
+                                            SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    // dobrovoljciProfili[index].data()['ratings'].values.toString(),
+                                                    dobrovoljciProfili[index].data()['userName'],
+                                                    style: Theme.of(context).textTheme.headlineMedium,
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  if (widget.ownerId == FirebaseAuth.instance.currentUser!.uid)
+                                                    if (dobrovoljciProfili[index].data()['ratings'].keys.toString().contains('${widget.objavaId}${widget.ownerId}'))
+                                                      Row(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 1
+                                                                  ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
+                                                                  : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 1, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 1 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 2
+                                                                  ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
+                                                                  : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 2, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 2 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 3
+                                                                  ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
+                                                                  : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 3, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 3 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 4
+                                                                  ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
+                                                                  : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 4, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 4 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 5
+                                                                  ? Provider.of<MojProvider>(context, listen: false).removeRateDobrovoljac(context, widget.objavaId, widget.ownerId, dobrovoljciProfili[index].data()['userId'])
+                                                                  : Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 5, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              dobrovoljciProfili[index].data()['ratings']['${widget.objavaId}${widget.ownerId}'] >= 5 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                  if (widget.ownerId == FirebaseAuth.instance.currentUser!.uid)
+                                                    if (!dobrovoljciProfili[index].data()['ratings'].keys.toString().contains('${widget.objavaId}${widget.ownerId}'))
+                                                      Row(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 1, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 2, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 3, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 4, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Provider.of<MojProvider>(context, listen: false).rateDobrovoljac(context, 5, widget.ownerId, dobrovoljciProfili[index].data()['userId'], widget.objavaId);
+                                                            },
+                                                            child: SvgPicture.asset(
+                                                              'assets/icons/Star.svg',
+                                                              height: 30,
+                                                              width: 30,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),

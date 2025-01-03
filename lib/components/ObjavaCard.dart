@@ -22,6 +22,7 @@ class ObjavaCard extends StatefulWidget {
   final String brojTel;
   final Map<String, dynamic> dobrovoljci;
   final Map<String, dynamic> location;
+  final bool ownerProfileClick;
   const ObjavaCard({
     super.key,
     required this.naslov,
@@ -35,6 +36,7 @@ class ObjavaCard extends StatefulWidget {
     required this.ownerId,
     required this.location,
     required this.brojTel,
+    required this.ownerProfileClick,
   });
 
   @override
@@ -81,6 +83,7 @@ class _ObjavaCardState extends State<ObjavaCard> {
               location: widget.location,
               brojTel: widget.brojTel,
               createdAt: widget.createdAt,
+              ownerProfileClick: widget.ownerProfileClick,
             ),
           ),
         );
@@ -97,7 +100,7 @@ class _ObjavaCardState extends State<ObjavaCard> {
               blurStyle: BlurStyle.normal,
             ),
           ],
-          color: Colors.white,
+          color: DateTime.parse(widget.createdAt).isAfter(DateTime.now().subtract(Duration(days: 15))) ? Colors.white : Colors.grey.shade300,
           borderRadius: BorderRadius.circular(10),
         ),
         padding: EdgeInsets.all(12),
@@ -182,93 +185,95 @@ class _ObjavaCardState extends State<ObjavaCard> {
                             isJednoPoredDrugog: false,
                           );
                         }
-                      : () {
-                          Metode.showErrorDialog(
-                            context: context,
-                            naslov: 'Koju akciju želite da izvršite?',
-                            button1Text: 'Uredite objavu',
-                            button1Icon: Icon(LucideIcons.squarePen),
-                            isButton1Icon: true,
-                            button1Fun: () {
-                              Navigator.pushReplacement(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration: const Duration(milliseconds: 500),
-                                  reverseTransitionDuration: const Duration(milliseconds: 500),
-                                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                    return SlideTransition(
-                                      position: Tween<Offset>(
-                                        begin: const Offset(-1, 0),
-                                        end: Offset.zero,
-                                      ).animate(
-                                        CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                      : DateTime.parse(widget.createdAt).isAfter(DateTime.now().subtract(Duration(days: 15)))
+                          ? () {
+                              Metode.showErrorDialog(
+                                context: context,
+                                naslov: 'Koju akciju želite da izvršite?',
+                                button1Text: 'Uredite objavu',
+                                button1Icon: Icon(LucideIcons.squarePen),
+                                isButton1Icon: true,
+                                button1Fun: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageRouteBuilder(
+                                      transitionDuration: const Duration(milliseconds: 500),
+                                      reverseTransitionDuration: const Duration(milliseconds: 500),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        return SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(-1, 0),
+                                            end: Offset.zero,
+                                          ).animate(
+                                            CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                                          ),
+                                          child: child,
+                                        );
+                                      },
+                                      pageBuilder: (context, animation, duration) => ObjavaEditScreen(
+                                        naslov: widget.naslov,
+                                        opis: widget.opis,
+                                        kategorija: widget.kategorija,
+                                        objavaId: widget.objavaId,
                                       ),
-                                      child: child,
-                                    );
-                                  },
-                                  pageBuilder: (context, animation, duration) => ObjavaEditScreen(
-                                    naslov: widget.naslov,
-                                    opis: widget.opis,
-                                    kategorija: widget.kategorija,
-                                    objavaId: widget.objavaId,
-                                  ),
-                                ),
-                              );
-                            },
-                            isButton2: true,
-                            button2Text: 'Obrišite objavu',
-                            isButton2Icon: true,
-                            button2Icon: Icon(LucideIcons.trash),
-                            button2Fun: () async {
-                              try {
-                                Metode.checkConnection(context: context);
-                              } catch (e) {
-                                Metode.showErrorDialog(
-                                  isJednoPoredDrugog: false,
-                                  context: context,
-                                  naslov: 'Nema internet konekcije',
-                                  button1Text: 'Zatvori',
-                                  button1Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                  isButton2: false,
-                                );
-                              }
-                              try {
-                                await FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).delete().then((value) {
-                                  Navigator.pop(context);
-                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Uspješno ste obrisali objavu!',
-                                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                              color: Colors.white,
-                                            ),
-                                      ),
-                                      duration: const Duration(milliseconds: 1500),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: Colors.red,
-                                      elevation: 4,
                                     ),
                                   );
-                                });
-                              } catch (e) {
-                                Metode.showErrorDialog(
-                                  isJednoPoredDrugog: false,
-                                  context: context,
-                                  naslov: 'Došlo je do greške',
-                                  button1Text: 'Zatvori',
-                                  button1Fun: () {
-                                    Navigator.pop(context);
-                                  },
-                                  isButton2: false,
-                                );
-                              }
-                            },
-                            isJednoPoredDrugog: false,
-                          );
-                        },
+                                },
+                                isButton2: true,
+                                button2Text: 'Obrišite objavu',
+                                isButton2Icon: true,
+                                button2Icon: Icon(LucideIcons.trash),
+                                button2Fun: () async {
+                                  try {
+                                    Metode.checkConnection(context: context);
+                                  } catch (e) {
+                                    Metode.showErrorDialog(
+                                      isJednoPoredDrugog: false,
+                                      context: context,
+                                      naslov: 'Nema internet konekcije',
+                                      button1Text: 'Zatvori',
+                                      button1Fun: () {
+                                        Navigator.pop(context);
+                                      },
+                                      isButton2: false,
+                                    );
+                                  }
+                                  try {
+                                    await FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).delete().then((value) {
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Uspješno ste obrisali objavu!',
+                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                  color: Colors.white,
+                                                ),
+                                          ),
+                                          duration: const Duration(milliseconds: 1500),
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: Colors.red,
+                                          elevation: 4,
+                                        ),
+                                      );
+                                    });
+                                  } catch (e) {
+                                    Metode.showErrorDialog(
+                                      isJednoPoredDrugog: false,
+                                      context: context,
+                                      naslov: 'Došlo je do greške',
+                                      button1Text: 'Zatvori',
+                                      button1Fun: () {
+                                        Navigator.pop(context);
+                                      },
+                                      isButton2: false,
+                                    );
+                                  }
+                                },
+                                isJednoPoredDrugog: false,
+                              );
+                            }
+                          : () {},
                   child: Icon(
                     LucideIcons.ellipsisVertical,
                     size: 20,
