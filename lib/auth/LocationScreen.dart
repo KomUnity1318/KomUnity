@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:komunity/MojProvider.dart';
+import 'package:komunity/account/AccountEditScreen.dart';
 import 'package:komunity/components/Button.dart';
+import 'package:komunity/components/CustomAppbar.dart';
 import 'package:komunity/components/metode.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'dart:convert';
@@ -14,9 +16,11 @@ import 'package:provider/provider.dart';
 class LocationScreen extends StatefulWidget {
   static const String routeName = '/LocationScreen';
   final LatLng currentPosition;
-  LocationScreen({
+  final bool isAppBar;
+  const LocationScreen({
     super.key,
     required this.currentPosition,
+    required this.isAppBar,
   });
 
   @override
@@ -39,6 +43,9 @@ class _LocationScreenState extends State<LocationScreen> {
   };
 
   void changeMapMode(GoogleMapController mapController) {
+    setState(() {
+      isLoading = true;
+    });
     getJsonFile("assets/map_style.json").then((value) => setMapStyle(value, mapController));
   }
 
@@ -49,6 +56,9 @@ class _LocationScreenState extends State<LocationScreen> {
   Future<String> getJsonFile(String path) async {
     ByteData byte = await rootBundle.load(path);
     var list = byte.buffer.asUint8List(byte.offsetInBytes, byte.lengthInBytes);
+    setState(() {
+      isLoading = false;
+    });
     return utf8.decode(list);
   }
 
@@ -89,7 +99,29 @@ class _LocationScreenState extends State<LocationScreen> {
           setState(() {
             isLoading = false;
           });
-          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          if (widget.isAppBar) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 500),
+                reverseTransitionDuration: const Duration(milliseconds: 500),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(-1, 0),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
+                    ),
+                    child: child,
+                  );
+                },
+                pageBuilder: (context, animation, duration) => AccountEditScreen(),
+              ),
+            );
+          } else {
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          }
         });
       } catch (error) {
         setState(() {
@@ -125,6 +157,29 @@ class _LocationScreenState extends State<LocationScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              if (widget.isAppBar)
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
+                  child: CustomAppBar(
+                    pageTitle: Text(
+                      'Promijenite lokaciju',
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
+                    isCenter: true,
+                    prvaIkonica: Icon(
+                      LucideIcons.circleArrowLeft,
+                      size: 30,
+                    ),
+                    prvaIkonicaFunkcija: () {
+                      Navigator.pop(context);
+                    },
+                    drugaIkonica: SizedBox(
+                      height: 15,
+                      width: 15,
+                    ),
+                    drugaIkonicaFunkcija: () {},
+                  ),
+                ),
               Container(
                 child: Column(
                   children: [
@@ -150,44 +205,48 @@ class _LocationScreenState extends State<LocationScreen> {
                   Container(
                     height: (medijakveri.size.height - medijakveri.padding.top) * 0.45,
                     margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          // target: LatLng(43.072267184509066, 19.77565134246493),
-                          target: widget.currentPosition,
-                          zoom: 15,
-                        ),
-                        onMapCreated: (GoogleMapController c) {
-                          yourMapController = c;
-                          changeMapMode(yourMapController!);
-                        },
-                        compassEnabled: false,
-                        mapToolbarEnabled: false,
-                        mapType: MapType.normal,
-                        myLocationButtonEnabled: true,
-                        myLocationEnabled: true,
-                        zoomControlsEnabled: false,
-                        onTap: (position) {
-                          setState(() {
-                            markeri.clear();
-                            markeri.add(
-                              Marker(
-                                markerId: MarkerId(
-                                  DateTime.now().toIso8601String(),
-                                ),
-                                position: position,
-                                icon: BitmapDescriptor.defaultMarker,
+                    child: isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: GoogleMap(
+                              initialCameraPosition: CameraPosition(
+                                // target: LatLng(43.072267184509066, 19.77565134246493),
+                                target: widget.currentPosition,
+                                zoom: 15,
                               ),
-                            );
-                            lokacijaData['lat'] = position.latitude.toString();
-                            lokacijaData['long'] = position.longitude.toString();
-                            lokacijaError = '';
-                          });
-                        },
-                        markers: markeri,
-                      ),
-                    ),
+                              onMapCreated: (GoogleMapController c) {
+                                yourMapController = c;
+                                changeMapMode(yourMapController!);
+                              },
+                              compassEnabled: false,
+                              mapToolbarEnabled: false,
+                              mapType: MapType.normal,
+                              myLocationButtonEnabled: true,
+                              myLocationEnabled: true,
+                              zoomControlsEnabled: false,
+                              onTap: (position) {
+                                setState(() {
+                                  markeri.clear();
+                                  markeri.add(
+                                    Marker(
+                                      markerId: MarkerId(
+                                        DateTime.now().toIso8601String(),
+                                      ),
+                                      position: position,
+                                      icon: BitmapDescriptor.defaultMarker,
+                                    ),
+                                  );
+                                  lokacijaData['lat'] = position.latitude.toString();
+                                  lokacijaData['long'] = position.longitude.toString();
+                                  lokacijaError = '';
+                                });
+                              },
+                              markers: markeri,
+                            ),
+                          ),
                   ),
                   SizedBox(height: 5),
                   if (lokacijaError != '')
@@ -240,18 +299,22 @@ class _LocationScreenState extends State<LocationScreen> {
                       },
                     ),
                     SizedBox(height: 15),
-                    Button(
-                      buttonText: 'Potvrdi',
-                      borderRadius: 10,
-                      visina: 16,
-                      icon: Icon(LucideIcons.circleCheckBig),
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      textColor: Colors.black,
-                      isBorder: true,
-                      funkcija: () {
-                        addLocation();
-                      },
-                    ),
+                    isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Button(
+                            buttonText: 'Potvrdi',
+                            borderRadius: 10,
+                            visina: 16,
+                            icon: Icon(LucideIcons.circleCheckBig),
+                            backgroundColor: Theme.of(context).colorScheme.secondary,
+                            textColor: Colors.black,
+                            isBorder: true,
+                            funkcija: () {
+                              addLocation();
+                            },
+                          ),
                   ],
                 ),
               ),

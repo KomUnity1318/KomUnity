@@ -36,7 +36,7 @@ dependencies:
     cupertino_icons: ^1.0.8
     firebase_core: ^3.9.0
     firebase_auth: ^5.3.4
-    cloud_firestore: ^5.6.0
+    cloud_firestore: ^5.5.1
     firebase_storage: ^12.3.7
     lucide_icons_flutter: ^1.2.5
     flutter_svg: ^2.0.16

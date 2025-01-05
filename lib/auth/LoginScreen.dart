@@ -45,9 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     _form.currentState!.save();
-    // print(_authData['email']);
-    // print(_authData['sifra']);
-    // return;
+
     try {
       Metode.checkConnection(context: context);
     } catch (e) {
