@@ -114,6 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             'long': '',
           },
           'ratings': {},
+          'znanjaVjestine': [],
         });
         LatLng currentPosition = LatLng(0, 0);
         await Provider.of<MojProvider>(context, listen: false).setCurrentPosition().then((valuE) {
@@ -141,6 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
               pageBuilder: (context, animation, duration) => LocationScreen(
                 currentPosition: currentPosition,
+                isAppBar: false,
               ),
             ),
           );
@@ -226,7 +228,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return 'Ime mora biti duže';
                               } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
                                 return 'Ime nije validano';
-                              } else if (value.length > 30) {
+                              } else if (value.length > 15) {
                                 return 'Ime mora biti kraće';
                               } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
                                 return 'Ime smije sadržati samo velika i mala slova i simbole';
@@ -260,7 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 return 'Prezime mora biti duže';
                               } else if (!RegExp(r'^[a-zA-Z\S]+$').hasMatch(value)) {
                                 return 'Prezime nije validano';
-                              } else if (value.length > 30) {
+                              } else if (value.length > 15) {
                                 return 'Prezime mora biti kraće';
                               } else if (value.contains(RegExp(r'[0-9]')) || value.contains(' ')) {
                                 return 'Prezime smije sadržati samo velika i mala slova i simbole';

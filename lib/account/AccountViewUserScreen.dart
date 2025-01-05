@@ -22,14 +22,86 @@ class AccountViewUserScreen extends StatefulWidget {
 }
 
 class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
-  DocumentSnapshot<Map<String, dynamic>>? user;
-
   bool isLoading = false;
+  QuerySnapshot<Map<String, dynamic>>? users;
+
+  @override
+  void didChangeDependencies() async {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    try {
+      Metode.checkConnection(context: context);
+    } catch (e) {
+      Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
+        context: context,
+        naslov: 'Nema internet konekcije',
+        button1Text: 'Zatvori',
+        button1Fun: () {
+          Navigator.pop(context);
+        },
+        isButton2: false,
+      );
+    }
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await FirebaseFirestore.instance.collection('users').get().then((usersValue) {
+        users = usersValue;
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (e) {
+      Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
+        context: context,
+        naslov: 'Došlo je do greške',
+        button1Text: 'Zatvori',
+        button1Fun: () {
+          Navigator.pop(context);
+        },
+        isButton2: false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size(100, 100),
+        child: SafeArea(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
+            child: CustomAppBar(
+              pageTitle: Row(
+                children: [
+                  Text(
+                    'Nalog',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                ],
+              ),
+              prvaIkonica: Icon(
+                LucideIcons.circleArrowLeft,
+                size: 30,
+              ),
+              prvaIkonicaFunkcija: () {
+                Navigator.pop(context);
+              },
+              drugaIkonica: SizedBox(
+                height: 30,
+                width: 30,
+              ),
+              drugaIkonicaFunkcija: () {},
+              isCenter: true,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         primary: false,
         child: Container(
@@ -37,29 +109,6 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                CustomAppBar(
-                  pageTitle: Row(
-                    children: [
-                      Text(
-                        'Nalog',
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      ),
-                    ],
-                  ),
-                  prvaIkonica: Icon(
-                    LucideIcons.circleArrowLeft,
-                    size: 30,
-                  ),
-                  prvaIkonicaFunkcija: () {
-                    Navigator.pop(context);
-                  },
-                  drugaIkonica: SizedBox(
-                    height: 30,
-                    width: 30,
-                  ),
-                  drugaIkonicaFunkcija: () {},
-                  isCenter: true,
-                ),
                 FutureBuilder(
                   future: FirebaseFirestore.instance.collection('users').doc(widget.nalogId).get(),
                   builder: (context, snapshot) {
@@ -78,8 +127,6 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                     if (snapshot.data!.data()!['ratings'].isNotEmpty) {
                       int ratings = int.parse(snapshot.data!.data()!['ratings'].values.toString().replaceAll(RegExp(r'[^0-9]'), ''));
 
-                      // ratings = ratings / 10;
-                      // print(ratings % 10);
                       while (ratings > 0) {
                         reputacija += ratings % 10;
                         ratings = (ratings / 10).floor();
@@ -134,7 +181,7 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                                   style: Theme.of(context).textTheme.headlineMedium,
                                 ),
                                 Text(
-                                  (reputacija / brojac).toStringAsFixed(1),
+                                  (reputacija / brojac).isNaN ? '0.0' : (reputacija / brojac).toStringAsFixed(1),
                                   style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                         color: Theme.of(context).colorScheme.tertiary,
                                       ),
@@ -155,27 +202,27 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   SvgPicture.asset(
-                                    reputacija / brojac > 1 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                    reputacija / brojac >= 1 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
                                     height: 39,
                                   ),
                                   SizedBox(width: 10),
                                   SvgPicture.asset(
-                                    reputacija / brojac > 2 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                    reputacija / brojac >= 2 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
                                     height: 39,
                                   ),
                                   SizedBox(width: 10),
                                   SvgPicture.asset(
-                                    reputacija / brojac > 3 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                    reputacija / brojac >= 3 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
                                     height: 39,
                                   ),
                                   SizedBox(width: 10),
                                   SvgPicture.asset(
-                                    reputacija / brojac > 4 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                    reputacija / brojac >= 4 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
                                     height: 39,
                                   ),
                                   SizedBox(width: 10),
                                   SvgPicture.asset(
-                                    reputacija / brojac > 5 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
+                                    reputacija / brojac >= 5 ? 'assets/icons/StarFilled.svg' : 'assets/icons/Star.svg',
                                     height: 39,
                                   ),
                                 ],
@@ -184,51 +231,83 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                           ],
                         ),
                         SizedBox(height: 15),
-                        Column(
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  'Znanja i vještine',
-                                  style: Theme.of(context).textTheme.headlineMedium,
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        height: 10,
-                                        width: 10,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Theme.of(context).colorScheme.primary,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        'Cijepanje drva',
-                                        style: Theme.of(context).textTheme.labelLarge,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                            Text(
+                              'Znanja i vještine',
+                              style: Theme.of(context).textTheme.headlineMedium,
                             ),
                           ],
+                        ),
+                        SizedBox(height: 10),
+                        Container(
+                          width: medijakveri.size.width,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (snapshot.data!.data()!['znanjaVjestine'] == null || snapshot.data!.data()!['znanjaVjestine'] == [] || snapshot.data!.data()!['znanjaVjestine'].isEmpty)
+                                Row(
+                                  children: [
+                                    Container(
+                                      height: 10,
+                                      width: 10,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Container(
+                                      width: medijakveri.size.width * 0.7,
+                                      child: Text(
+                                        'Korisnik nije dodao svoja znanja i vještine',
+                                        style: Theme.of(context).textTheme.labelLarge,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              if (snapshot.data!.data()!['znanjaVjestine'] != null || snapshot.data!.data()!['znanjaVjestine'] != [] || snapshot.data!.data()!['znanjaVjestine'].isEmpty)
+                                ListView.separated(
+                                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true, // zauzima min content prostor
+                                  primary: false, // ne skrola ovu listu nego sve generalno
+                                  itemCount: snapshot.data!.data()!['znanjaVjestine'].length,
+                                  itemBuilder: ((context, index) => Row(
+                                        children: [
+                                          Container(
+                                            height: 10,
+                                            width: 10,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: Theme.of(context).colorScheme.primary,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Container(
+                                            width: medijakveri.size.width * 0.7,
+                                            child: Text(
+                                              snapshot.data!.data()!['znanjaVjestine'][index],
+                                              style: Theme.of(context).textTheme.labelLarge,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                ),
+                            ],
+                          ),
                         ),
                         SizedBox(height: 15),
                         Column(
@@ -274,19 +353,21 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                                   return ListView.builder(
                                     itemCount: mojeObjave.length,
                                     itemBuilder: (context, index) {
+                                      final user = users!.docs.where((value) => value.id == mojeObjave[index].data()['ownerId']).toList();
+
                                       return ObjavaCard(
                                         naslov: mojeObjave[index].data()['naslov'],
                                         opis: mojeObjave[index].data()['opis'],
-                                        ownerName: mojeObjave[index].data()['ownerName'],
+                                        ownerName: user[0].data()['userName'],
                                         ownerId: mojeObjave[index].data()['ownerId'],
                                         medijakveri: medijakveri,
                                         createdAt: mojeObjave[index].data()['createdAt'],
                                         kategorija: mojeObjave[index].data()['kategorija'],
                                         dobrovoljci: mojeObjave[index].data()['dobrovoljci'],
-                                        location: mojeObjave[index].data()['adresa'],
-                                        brojTel: mojeObjave[index].data()['broj'],
+                                        location: user[0].data()['location'],
+                                        brojTel: user[0].data()['broj'],
                                         objavaId: mojeObjave[index].id,
-                                        ownerProfileClick: false,
+                                        ownerProfileClick: true,
                                       );
                                     },
                                   );

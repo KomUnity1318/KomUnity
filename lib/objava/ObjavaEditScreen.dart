@@ -85,12 +85,6 @@ class _ObjavaEditScreenState extends State<ObjavaEditScreen> {
       }
 
       await FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).update({
-        'ownerName': userInfo.data()!['userName'],
-        'broj': userInfo.data()!['broj'],
-        'adresa': {
-          'lat': userInfo.data()!['location']['lat'],
-          'long': userInfo.data()!['location']['long'],
-        },
         'naslov': objavaData['naslov'],
         'opis': objavaData['opis'],
         'kategorija': objavaData['kategorija'],
@@ -191,7 +185,6 @@ class _ObjavaEditScreenState extends State<ObjavaEditScreen> {
                             } else if (value.length < 4) {
                               return 'Naslov mora biti duži';
                             } else if (value.length > 50) {
-                              print(value.length);
                               return 'Naslov mora biti kraći';
                             }
                           },

@@ -22,6 +22,49 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool danasFilter = false;
+  QuerySnapshot<Map<String, dynamic>>? users;
+  bool isLoading = false;
+  @override
+  void didChangeDependencies() async {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    try {
+      Metode.checkConnection(context: context);
+    } catch (e) {
+      Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
+        context: context,
+        naslov: 'Nema internet konekcije',
+        button1Text: 'Zatvori',
+        button1Fun: () {
+          Navigator.pop(context);
+        },
+        isButton2: false,
+      );
+    }
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      await FirebaseFirestore.instance.collection('users').get().then((usersValue) {
+        users = usersValue;
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } catch (e) {
+      Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
+        context: context,
+        naslov: 'Došlo je do greške',
+        button1Text: 'Zatvori',
+        button1Fun: () {
+          Navigator.pop(context);
+        },
+        isButton2: false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,96 +168,101 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
             Container(
               height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
-              child: StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('posts').snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
+              child: isLoading
+                  ? Center(
                       child: CircularProgressIndicator(),
-                    );
-                  }
+                    )
+                  : StreamBuilder(
+                      stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                  final objaveP = snapshot.data!.docs;
-                  if (objaveP.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'Trenutno nema objava',
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                    );
-                  }
-                  objaveP.sort((a, b) {
-                    if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
-                      return 0;
-                    } else {
-                      return 1;
-                    }
-                  });
-                  List<QueryDocumentSnapshot<Map<String, dynamic>>> objave = [];
-                  if (danasFilter) {
-                    objaveP.forEach((value) {
-                      if (Metode.timeAgo(value.data()['createdAt']).contains('min') || Metode.timeAgo(value.data()['createdAt']).contains('h')) {
-                        objave.add(value);
-                      }
-                    });
-                  } else {
-                    objaveP.forEach((value) {
-                      if (DateTime.parse(value.data()['createdAt']).isAfter(DateTime.now().subtract(Duration(days: 15)))) {
-                        objave.add(value);
-                      }
-                    });
-                    // objave = objaveP;
-                  }
-                  if (objave.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'Trenutno nema objava',
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                    );
-                  }
+                        final objaveP = snapshot.data!.docs;
+                        if (objaveP.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'Trenutno nema objava',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                          );
+                        }
+                        objaveP.sort((a, b) {
+                          if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
+                            return 0;
+                          } else {
+                            return 1;
+                          }
+                        });
+                        List<QueryDocumentSnapshot<Map<String, dynamic>>> objave = [];
+                        if (danasFilter) {
+                          objaveP.forEach((value) {
+                            if (Metode.timeAgo(value.data()['createdAt']).contains('min') || Metode.timeAgo(value.data()['createdAt']).contains('h')) {
+                              objave.add(value);
+                            }
+                          });
+                        } else {
+                          objaveP.forEach((value) {
+                            if (DateTime.parse(value.data()['createdAt']).isAfter(DateTime.now().subtract(Duration(days: 15)))) {
+                              objave.add(value);
+                            }
+                          });
+                          // objave = objaveP;
+                        }
+                        if (objave.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'Trenutno nema objava',
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                          );
+                        }
 
-                  try {
-                    return ListView.builder(
-                      itemCount: objave.length,
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      itemBuilder: (context, index) {
-                        return ObjavaCard(
-                          naslov: objave[index].data()['naslov'],
-                          opis: objave[index].data()['opis'],
-                          ownerName: objave[index].data()['ownerName'],
-                          ownerId: objave[index].data()['ownerId'],
-                          medijakveri: medijakveri,
-                          createdAt: objave[index].data()['createdAt'],
-                          kategorija: objave[index].data()['kategorija'],
-                          dobrovoljci: objave[index].data()['dobrovoljci'],
-                          location: objave[index].data()['adresa'],
-                          brojTel: objave[index].data()['broj'],
-                          objavaId: objave[index].id,
-                          ownerProfileClick: true,
+                        try {
+                          return ListView.builder(
+                            itemCount: objave.length,
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            itemBuilder: (context, index) {
+                              final user = users!.docs.where((value) => value.id == objave[index].data()['ownerId']).toList();
+                              return ObjavaCard(
+                                naslov: objave[index].data()['naslov'],
+                                opis: objave[index].data()['opis'],
+                                ownerName: user[0].data()['userName'],
+                                ownerId: objave[index].data()['ownerId'],
+                                medijakveri: medijakveri,
+                                createdAt: objave[index].data()['createdAt'],
+                                kategorija: objave[index].data()['kategorija'],
+                                dobrovoljci: objave[index].data()['dobrovoljci'],
+                                location: user[0].data()['location'],
+                                brojTel: user[0].data()['broj'],
+                                objavaId: objave[index].id,
+                                ownerProfileClick: true,
+                              );
+                            },
+                          );
+                        } catch (e) {
+                          Metode.showErrorDialog(
+                            isJednoPoredDrugog: false,
+                            context: context,
+                            naslov: 'Došlo je do greške',
+                            button1Text: 'Zatvori',
+                            button1Fun: () {
+                              Navigator.pop(context);
+                            },
+                            isButton2: false,
+                          );
+                        }
+                        return Center(
+                          child: Text(
+                            'Došlo je do greške',
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
                         );
                       },
-                    );
-                  } catch (e) {
-                    Metode.showErrorDialog(
-                      isJednoPoredDrugog: false,
-                      context: context,
-                      naslov: 'Došlo je do greške',
-                      button1Text: 'Zatvori',
-                      button1Fun: () {
-                        Navigator.pop(context);
-                      },
-                      isButton2: false,
-                    );
-                  }
-                  return Center(
-                    child: Text(
-                      'Došlo je do greške',
-                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

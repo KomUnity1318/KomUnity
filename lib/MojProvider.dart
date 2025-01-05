@@ -25,18 +25,16 @@ class MojProvider with ChangeNotifier {
 
   void pomogni(Map<String, dynamic> dobrovoljci, String objavaId) async {
     bool isDobrovoljac = false;
-    // print(dobrovoljci);
     dobrovoljci.keys.forEach((element) async {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
         isDobrovoljac = true;
       }
     });
     if (isDobrovoljac) {
-      await FirebaseFirestore.instance.collection('posts').doc(objavaId).set(
+      await FirebaseFirestore.instance.collection('posts').doc(objavaId).update(
         {
           'dobrovoljci.${FirebaseAuth.instance.currentUser!.uid}': FieldValue.delete(),
         },
-        SetOptions(merge: true),
       );
 
       notifyListeners();

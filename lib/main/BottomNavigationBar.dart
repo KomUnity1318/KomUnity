@@ -31,11 +31,10 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     if (index == _selectedIndex) {
       return;
     }
-    setState(() {
-      FocusManager.instance.primaryFocus?.unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
 
+    setState(() {
       _selectedIndex = index;
-      print(_selectedIndex);
     });
     // try {
     //   await InternetAddress.lookup('google.com').then((value) {
@@ -89,15 +88,15 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             showUnselectedLabels: true,
             items: [
               BottomNavigationBarItem(
-                icon: _selectedIndex == 0 ? SvgPicture.asset('assets/icons/HouseSelected.svg') : SvgPicture.asset('assets/icons/House.svg'),
+                icon: _selectedIndex == 0 ? SvgPicture.asset('assets/icons/HouseSelected.svg') : SvgPicture.asset('assets/icons/house.svg'),
                 label: 'Početna',
               ),
               BottomNavigationBarItem(
-                icon: _selectedIndex == 1 ? SvgPicture.asset('assets/icons/CirclePlusSelected.svg') : SvgPicture.asset('assets/icons/CirclePlus.svg'),
+                icon: _selectedIndex == 1 ? SvgPicture.asset('assets/icons/CirclePlusSelected.svg') : SvgPicture.asset('assets/icons/circlePlus.svg'),
                 label: 'Dodaj',
               ),
               BottomNavigationBarItem(
-                icon: _selectedIndex == 2 ? SvgPicture.asset('assets/icons/SquareUserSelected.svg') : SvgPicture.asset('assets/icons/SquareUser.svg'),
+                icon: _selectedIndex == 2 ? SvgPicture.asset('assets/icons/SquareUserSelected.svg') : SvgPicture.asset('assets/icons/squareUser.svg'),
                 label: 'Nalog',
               ),
             ],

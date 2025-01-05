@@ -77,12 +77,6 @@ class _AddScreenState extends State<AddScreen> {
 
       await FirebaseFirestore.instance.collection('posts').add({
         'ownerId': FirebaseAuth.instance.currentUser!.uid,
-        'ownerName': userInfo.data()!['userName'],
-        'broj': userInfo.data()!['broj'],
-        'adresa': {
-          'lat': userInfo.data()!['location']['lat'],
-          'long': userInfo.data()!['location']['long'],
-        },
         'dobrovoljci': {},
         'naslov': objavaData['naslov'],
         'opis': objavaData['opis'],
@@ -198,7 +192,6 @@ class _AddScreenState extends State<AddScreen> {
                           } else if (value.length < 4) {
                             return 'Naslov mora biti duži';
                           } else if (value.length > 50) {
-                            print(value.length);
                             return 'Naslov mora biti kraći';
                           }
                         },
