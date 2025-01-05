@@ -322,7 +322,8 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                             ),
                             SizedBox(height: 10),
                             Container(
-                              height: (medijakveri.size.height - medijakveri.padding.top) * 0.416,
+                              constraints: BoxConstraints(maxHeight: (medijakveri.size.height - medijakveri.padding.top) * 0.55),
+                              // height: (medijakveri.size.height - medijakveri.padding.top) * 0.416,
                               child: StreamBuilder(
                                 stream: FirebaseFirestore.instance.collection('posts').snapshots(),
                                 builder: (context, snapshot) {
@@ -351,6 +352,8 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                                     }
                                   });
                                   return ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
                                     itemCount: mojeObjave.length,
                                     itemBuilder: (context, index) {
                                       final user = users!.docs.where((value) => value.id == mojeObjave[index].data()['ownerId']).toList();
@@ -376,6 +379,7 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                             ),
                           ],
                         ),
+                        SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.05),
                       ],
                     );
                   },

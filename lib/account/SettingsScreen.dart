@@ -51,7 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 isCenter: true,
               ),
               Container(
-                height: 40,
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -78,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               SizedBox(height: 10),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
@@ -121,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),
@@ -143,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               SizedBox(height: 10),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(5),
@@ -196,7 +195,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(5),

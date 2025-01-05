@@ -313,7 +313,6 @@ class _ObjavaCardState extends State<ObjavaCard> {
                                         }
                                         try {
                                           await FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).delete().then((value) {
-                                            Navigator.pop(context);
                                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
@@ -329,8 +328,10 @@ class _ObjavaCardState extends State<ObjavaCard> {
                                                 elevation: 4,
                                               ),
                                             );
+                                            Navigator.pop(context);
                                           });
                                         } catch (e) {
+                                          Navigator.pop(context);
                                           Metode.showErrorDialog(
                                             isJednoPoredDrugog: false,
                                             context: context,
