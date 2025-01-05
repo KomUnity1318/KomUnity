@@ -87,9 +87,10 @@ class _AddScreenState extends State<AddScreen> {
           isLoading = false;
           objavaData['naslov'] = '';
           objavaData['opis'] = '';
-          objavaData['kategorija'] = '';
+          objavaData['kategorija'] = 'Pomoć';
           form.currentState!.reset();
         });
+        Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -375,6 +375,7 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                       ),
                       SizedBox(height: 15),
                       Container(
+                        width: medijakveri.size.width * 0.961,
                         child: Text(
                           objava!.data()!['opis'],
                           style: Theme.of(context).textTheme.headlineMedium!.copyWith(
@@ -471,6 +472,7 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                                   );
                                 }
                                 return ListView.builder(
+                                  primary: false,
                                   itemCount: dobrovoljciProfili.length,
                                   itemBuilder: (context, index) {
                                     return GestureDetector(
