@@ -394,7 +394,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                                 child: InputFieldDisabled(
                                   medijakveri: medijakveri,
                                   label: 'Adresa',
-                                  text: '${mjesto[0].name}, ${mjesto[0].locality == '' ? mjesto[0].administrativeArea : mjesto[0].locality}',
+                                  text: '${mjesto[0].subLocality == '' ? mjesto[0].locality == '' ? mjesto[0].name : mjesto[0].locality : mjesto[0].subLocality}, ${mjesto[0].administrativeArea}',
                                   borderRadijus: 10,
                                 ),
                               ),

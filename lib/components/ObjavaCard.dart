@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:komunity/MojProvider.dart';
 import 'package:komunity/components/Button.dart';
 import 'package:komunity/components/metode.dart';
+import 'package:komunity/main.dart';
 import 'package:komunity/objava/ObjavaEditScreen.dart';
 import 'package:komunity/objava/ObjavaViewScreen.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -98,6 +100,7 @@ class _ObjavaCardState extends State<ObjavaCard> {
 
   @override
   Widget build(BuildContext context) {
+    final medijakveri = MediaQuery.of(context);
     bool isDobrovoljac = false;
     for (var element in widget.dobrovoljci.keys) {
       if (element == FirebaseAuth.instance.currentUser!.uid) {
@@ -191,11 +194,13 @@ class _ObjavaCardState extends State<ObjavaCard> {
                           SizedBox(width: 5),
                           Container(
                             constraints: BoxConstraints(
-                              maxWidth: widget.medijakveri.size.width * 0.38,
+                              maxWidth: widget.medijakveri.size.width * 0.42,
+                              minHeight: 16,
                             ),
                             child: FittedBox(
                               child: Text(
-                                widget.ownerName,
+                                // widget.ownerName,
+                                widget.ownerName.length > 25 ? '${widget.ownerName.substring(0, 20)}...' : widget.ownerName,
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ),
@@ -209,6 +214,7 @@ class _ObjavaCardState extends State<ObjavaCard> {
                           ),
                           SizedBox(width: 5),
                           Container(
+                            constraints: BoxConstraints(maxWidth: 85),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.tertiary,
@@ -216,6 +222,8 @@ class _ObjavaCardState extends State<ObjavaCard> {
                             ),
                             child: Text(
                               '#${widget.kategorija}',
+                              // softWrap: true,
+                              textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                                     color: Colors.white,
                                   ),
@@ -312,24 +320,24 @@ class _ObjavaCardState extends State<ObjavaCard> {
                                           );
                                         }
                                         try {
-                                          await FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).delete().then((value) {
-                                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Uspješno ste obrisali objavu!',
-                                                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                                        color: Colors.white,
-                                                      ),
-                                                ),
-                                                duration: const Duration(milliseconds: 1500),
-                                                behavior: SnackBarBehavior.floating,
-                                                backgroundColor: Colors.red,
-                                                elevation: 4,
+                                          FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).delete();
+
+                                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Uspješno ste obrisali objavu!',
+                                                style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                                      color: Colors.white,
+                                                    ),
                                               ),
-                                            );
-                                            Navigator.pop(context);
-                                          });
+                                              duration: const Duration(milliseconds: 1500),
+                                              behavior: SnackBarBehavior.floating,
+                                              backgroundColor: Colors.red,
+                                              elevation: 4,
+                                            ),
+                                          );
+                                          Navigator.pop(context);
                                         } catch (e) {
                                           Navigator.pop(context);
                                           Metode.showErrorDialog(

@@ -39,7 +39,6 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
   void didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    print('OBJAVA SCREEN ${widget.objavaId}');
     setState(() {
       isLoading = true;
     });
@@ -63,6 +62,7 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
     try {
       await FirebaseFirestore.instance.collection('posts').doc(widget.objavaId).get().then((objavaValue) async {
         objava = objavaValue;
+        print(objava);
         await FirebaseFirestore.instance.collection('users').doc(widget.ownerId).get().then((userDataValue) async {
           userData = userDataValue;
           try {
@@ -92,17 +92,17 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
     } catch (e) {
       setState(() {
         isLoading = false;
-        Metode.showErrorDialog(
-          isJednoPoredDrugog: false,
-          context: context,
-          naslov: 'Došlo je do greške',
-          button1Text: 'Zatvori',
-          button1Fun: () {
-            Navigator.pop(context);
-          },
-          isButton2: false,
-        );
       });
+      Metode.showErrorDialog(
+        isJednoPoredDrugog: false,
+        context: context,
+        naslov: 'Došlo je do greške',
+        button1Text: 'Zatvori',
+        button1Fun: () {
+          Navigator.pop(context);
+        },
+        isButton2: false,
+      );
     }
   }
 
@@ -167,6 +167,7 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                         button1Icon: Icon(LucideIcons.squarePen),
                         isButton1Icon: true,
                         button1Fun: () {
+                          Navigator.pop(context);
                           Navigator.pushReplacement(
                             context,
                             PageRouteBuilder(
@@ -339,10 +340,11 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                                 Container(
                                   constraints: BoxConstraints(
                                     maxWidth: medijakveri.size.width * 0.45,
+                                    minHeight: 20,
                                   ),
                                   child: FittedBox(
                                     child: Text(
-                                      userData!.data()!['userName'],
+                                      userData!.data()!['userName'].length > 25 ? '${userData!.data()!['userName'].toString().substring(0, 20)}...' : userData!.data()!['userName'],
                                       style: Theme.of(context).textTheme.headlineMedium,
                                     ),
                                   ),
@@ -358,6 +360,7 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                             ),
                             SizedBox(width: 5),
                             Container(
+                              constraints: BoxConstraints(maxWidth: 80),
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.tertiary,
@@ -415,7 +418,8 @@ class _ObjavaViewScreenState extends State<ObjavaViewScreen> {
                                     ),
                                     child: FittedBox(
                                       child: Text(
-                                        '${mjesto[0].name}, ${mjesto[0].locality == '' ? mjesto[0].administrativeArea : mjesto[0].locality}',
+                                        // '${mjesto[0]}, ${mjesto[0].administrativeArea}',
+                                        '${mjesto[0].subLocality == '' ? mjesto[0].locality == '' ? mjesto[0].name : mjesto[0].locality : mjesto[0].subLocality}, ${mjesto[0].administrativeArea}',
                                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
                                               color: Theme.of(context).colorScheme.tertiary,
                                               decoration: TextDecoration.underline,

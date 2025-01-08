@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -181,8 +183,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
 
-                        final objaveP = snapshot.data!.docs;
-                        if (objaveP.isEmpty) {
+                        final sveObjave = snapshot.data!.docs;
+                        if (sveObjave.isEmpty) {
                           return Center(
                             child: Text(
                               'Trenutno nema objava',
@@ -190,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         }
-                        objaveP.sort((a, b) {
+                        sveObjave.sort((a, b) {
                           if (DateTime.parse(a.data()['createdAt']).isAfter(DateTime.parse(b.data()['createdAt']))) {
                             return 0;
                           } else {
@@ -198,21 +200,35 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         });
                         List<QueryDocumentSnapshot<Map<String, dynamic>>> objave = [];
+                        List<QueryDocumentSnapshot<Map<String, dynamic>>> objaveF = [];
+                        final currentUser = users!.docs.where((value) => value.id == FirebaseAuth.instance.currentUser!.uid).toList();
+
+                        for (var i = 0; i < sveObjave.length; i++) {
+                          final owner = users!.docs.where((value) => value.id == sveObjave[i].data()['ownerId']).toList();
+
+                          final duzina = sqrt(
+                            (double.parse(owner[0].data()['location']['lat']).abs() - double.parse(currentUser[0].data()['location']['lat']).abs()).abs() + (double.parse(owner[0].data()['location']['long']).abs() - double.parse(currentUser[0].data()['location']['long']).abs()).abs(),
+                          );
+                          if (duzina < 0.078) {
+                            print(sveObjave[i].data()['naslov']);
+                            print(duzina);
+                            objave.add(sveObjave[i]);
+                          }
+                        }
                         if (danasFilter) {
-                          objaveP.forEach((value) {
+                          objave.forEach((value) {
                             if (Metode.timeAgo(value.data()['createdAt']).contains('min') || Metode.timeAgo(value.data()['createdAt']).contains('h')) {
-                              objave.add(value);
+                              objaveF.add(value);
                             }
                           });
                         } else {
-                          objaveP.forEach((value) {
+                          objave.forEach((value) {
                             if (DateTime.parse(value.data()['createdAt']).isAfter(DateTime.now().subtract(Duration(days: 15)))) {
-                              objave.add(value);
+                              objaveF.add(value);
                             }
                           });
-                          // objave = objaveP;
                         }
-                        if (objave.isEmpty) {
+                        if (objaveF.isEmpty) {
                           return Center(
                             child: Text(
                               'Trenutno nema objava',
@@ -223,22 +239,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         try {
                           return ListView.builder(
-                            itemCount: objave.length,
+                            itemCount: objaveF.length,
                             padding: const EdgeInsets.symmetric(vertical: 0),
                             itemBuilder: (context, index) {
-                              final user = users!.docs.where((value) => value.id == objave[index].data()['ownerId']).toList();
+                              final user = users!.docs.where((value) => value.id == objaveF[index].data()['ownerId']).toList();
                               return ObjavaCard(
-                                naslov: objave[index].data()['naslov'],
-                                opis: objave[index].data()['opis'],
+                                naslov: objaveF[index].data()['naslov'],
+                                opis: objaveF[index].data()['opis'],
                                 ownerName: user[0].data()['userName'],
-                                ownerId: objave[index].data()['ownerId'],
+                                ownerId: objaveF[index].data()['ownerId'],
                                 medijakveri: medijakveri,
-                                createdAt: objave[index].data()['createdAt'],
-                                kategorija: objave[index].data()['kategorija'],
-                                dobrovoljci: objave[index].data()['dobrovoljci'],
+                                createdAt: objaveF[index].data()['createdAt'],
+                                kategorija: objaveF[index].data()['kategorija'],
+                                dobrovoljci: objaveF[index].data()['dobrovoljci'],
                                 location: user[0].data()['location'],
                                 brojTel: user[0].data()['broj'],
-                                objavaId: objave[index].id,
+                                objavaId: objaveF[index].id,
                                 ownerProfileClick: true,
                               );
                             },
