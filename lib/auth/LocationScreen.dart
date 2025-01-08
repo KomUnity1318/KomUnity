@@ -100,6 +100,7 @@ class _LocationScreenState extends State<LocationScreen> {
             isLoading = false;
           });
           if (widget.isAppBar) {
+            Navigator.pop(context);
             Navigator.pushReplacement(
               context,
               PageRouteBuilder(
@@ -215,7 +216,7 @@ class _LocationScreenState extends State<LocationScreen> {
                               initialCameraPosition: CameraPosition(
                                 // target: LatLng(43.072267184509066, 19.77565134246493),
                                 target: widget.currentPosition,
-                                zoom: 15,
+                                zoom: 16.5,
                               ),
                               onMapCreated: (GoogleMapController c) {
                                 yourMapController = c;
