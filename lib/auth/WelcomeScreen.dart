@@ -26,6 +26,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               children: [
                 SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.07),
                 Container(
+                  height: (medijakveri.size.height - medijakveri.padding.top) * 0.4,
                   margin: EdgeInsets.symmetric(horizontal: 35),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),

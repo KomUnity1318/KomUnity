@@ -169,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
             Container(
-              height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
+              height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.755,
               child: isLoading
                   ? Center(
                       child: CircularProgressIndicator(),
@@ -210,8 +210,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             (double.parse(owner[0].data()['location']['lat']).abs() - double.parse(currentUser[0].data()['location']['lat']).abs()).abs() + (double.parse(owner[0].data()['location']['long']).abs() - double.parse(currentUser[0].data()['location']['long']).abs()).abs(),
                           );
                           if (duzina < 0.078) {
-                            print(sveObjave[i].data()['naslov']);
-                            print(duzina);
                             objave.add(sveObjave[i]);
                           }
                         }
