@@ -53,6 +53,8 @@ flutter_icons:
     android: true
     ios: true
     image_path: 'assets/icons/Logo.png'
+    adaptive_icon_background: '#2C3160'
+    adaptive_icon_foreground: 'assets/icons/AdaptiveLogo.png'
 
 dev_dependencies:
     flutter_test:
