@@ -370,7 +370,7 @@ class _AccountViewUserScreenState extends State<AccountViewUserScreen> {
                                         location: user[0].data()['location'],
                                         brojTel: user[0].data()['broj'],
                                         objavaId: mojeObjave[index].id,
-                                        ownerProfileClick: true,
+                                        ownerProfileClick: false,
                                       );
                                     },
                                   );
