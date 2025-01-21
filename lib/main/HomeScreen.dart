@@ -98,7 +98,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 LucideIcons.slidersHorizontal,
                 size: 30,
               ),
-              drugaIkonicaFunkcija: () {},
+              drugaIkonicaFunkcija: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Funkcionalnost stiže u sledećoj verziji',
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                    duration: const Duration(milliseconds: 1500),
+                    behavior: SnackBarBehavior.floating,
+                    backgroundColor: Theme.of(context).colorScheme.tertiary,
+                    elevation: 4,
+                  ),
+                );
+              },
               isCenter: false,
             ),
             Container(
