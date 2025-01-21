@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:komunity/main/AccountScreen.dart';
 import 'package:komunity/main/AddScreen.dart';
 import 'package:komunity/main/HomeScreen.dart';
+import 'package:komunity/main/ActivitiesScreen.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:slide_indexed_stack/slide_indexed_stack.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     AddScreen(),
+    ActivitiesScreen(),
     AccountScreen(),
   ];
 
@@ -96,7 +98,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
                 label: 'Dodaj',
               ),
               BottomNavigationBarItem(
-                icon: _selectedIndex == 2 ? SvgPicture.asset('assets/icons/SquareUserSelected.svg') : SvgPicture.asset('assets/icons/squareUser.svg'),
+                icon: _selectedIndex == 2 ? SvgPicture.asset('assets/icons/HeartHandshakeSelected.svg') : SvgPicture.asset('assets/icons/HeartHandshake.svg'),
+                label: 'Aktivnosti',
+              ),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 3 ? SvgPicture.asset('assets/icons/SquareUserSelected.svg') : SvgPicture.asset('assets/icons/squareUser.svg'),
                 label: 'Nalog',
               ),
             ],
