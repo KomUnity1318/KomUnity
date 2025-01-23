@@ -67,6 +67,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
     }
   }
 
+  String kategorijaFilter = 'nista';
+
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
@@ -90,32 +92,149 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                   "assets/icons/LogoZnak.svg",
                 ),
               ),
-              drugaIkonica: Icon(
-                LucideIcons.slidersHorizontal,
-                size: 30,
+              drugaIkonica: SizedBox(
+                child: Icon(
+                  LucideIcons.slidersHorizontal,
+                  size: 30,
+                  color: Colors.transparent,
+                ),
               ),
-              drugaIkonicaFunkcija: () {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Funkcionalnost stiže u sledećoj verziji',
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Colors.white,
-                          ),
-                    ),
-                    duration: const Duration(milliseconds: 1500),
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: Theme.of(context).colorScheme.tertiary,
-                    elevation: 4,
-                  ),
-                );
-              },
+              drugaIkonicaFunkcija: () {},
               isCenter: false,
             ),
-            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.02),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (kategorijaFilter == 'Pomoć') {
+                        setState(() {
+                          kategorijaFilter = 'nista';
+                        });
+                      } else {
+                        setState(() {
+                          kategorijaFilter = 'Pomoć';
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                          color: kategorijaFilter == 'Pomoć' ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.tertiary,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: kategorijaFilter == 'Pomoć' ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary,
+                          )),
+                      child: Text(
+                        '#Pomoć',
+                        // softWrap: true,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                              color: kategorijaFilter == 'Pomoć' ? Colors.black : Colors.white,
+                            ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      if (kategorijaFilter == 'Poklanjam') {
+                        setState(() {
+                          kategorijaFilter = 'nista';
+                        });
+                      } else {
+                        setState(() {
+                          kategorijaFilter = 'Poklanjam';
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                          color: kategorijaFilter == 'Poklanjam' ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.tertiary,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: kategorijaFilter == 'Poklanjam' ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary,
+                          )),
+                      child: Text(
+                        '#Poklanjam',
+                        // softWrap: true,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                              color: kategorijaFilter == 'Poklanjam' ? Colors.black : Colors.white,
+                            ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      if (kategorijaFilter == 'Pomoć - Fizički rad') {
+                        setState(() {
+                          kategorijaFilter = 'nista';
+                        });
+                      } else {
+                        setState(() {
+                          kategorijaFilter = 'Pomoć - Fizički rad';
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                          color: kategorijaFilter == 'Pomoć - Fizički rad' ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.tertiary,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: kategorijaFilter == 'Pomoć - Fizički rad' ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary,
+                          )),
+                      child: Text(
+                        '#Pomoć - Fizički rad',
+                        // softWrap: true,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                              color: kategorijaFilter == 'Pomoć - Fizički rad' ? Colors.black : Colors.white,
+                            ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () {
+                      if (kategorijaFilter == 'Prevoz') {
+                        setState(() {
+                          kategorijaFilter = 'nista';
+                        });
+                      } else {
+                        setState(() {
+                          kategorijaFilter = 'Prevoz';
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                          color: kategorijaFilter == 'Prevoz' ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.tertiary,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: kategorijaFilter == 'Prevoz' ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary,
+                          )),
+                      child: Text(
+                        '#Prevoz',
+                        // softWrap: true,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                              color: kategorijaFilter == 'Prevoz' ? Colors.black : Colors.white,
+                            ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.01),
             Container(
-              height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.8,
+              height: (medijakveri.size.height - medijakveri.padding.top - medijakveri.viewInsets.bottom) * 0.76,
               child: isLoading
                   ? Center(
                       child: CircularProgressIndicator(),
@@ -148,6 +267,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                         List<QueryDocumentSnapshot<Map<String, dynamic>>> objave = [];
                         List<QueryDocumentSnapshot<Map<String, dynamic>>> objaveF = [];
                         List<QueryDocumentSnapshot<Map<String, dynamic>>> objaveF2 = [];
+                        List<QueryDocumentSnapshot<Map<String, dynamic>>> objaveF3 = [];
                         final currentUser = users!.docs.where((value) => value.id == FirebaseAuth.instance.currentUser!.uid).toList();
 
                         for (var i = 0; i < sveObjave.length; i++) {
@@ -171,8 +291,16 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                             objaveF2.add(element);
                           }
                         });
-
-                        if (objaveF2.isEmpty) {
+                        objaveF2.forEach((value) {
+                          if (kategorijaFilter == 'nista') {
+                            objaveF3 = objaveF2;
+                            return;
+                          }
+                          if (value.data()['kategorija'] == kategorijaFilter) {
+                            objaveF3.add(value);
+                          }
+                        });
+                        if (objaveF3.isEmpty) {
                           return Center(
                             child: Text(
                               'Trenutno nema objava',
@@ -183,22 +311,22 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
 
                         try {
                           return ListView.builder(
-                            itemCount: objaveF2.length,
+                            itemCount: objaveF3.length,
                             padding: const EdgeInsets.symmetric(vertical: 0),
                             itemBuilder: (context, index) {
-                              final user = users!.docs.where((value) => value.id == objaveF2[index].data()['ownerId']).toList();
+                              final user = users!.docs.where((value) => value.id == objaveF3[index].data()['ownerId']).toList();
                               return ObjavaCard(
-                                naslov: objaveF2[index].data()['naslov'],
-                                opis: objaveF2[index].data()['opis'],
+                                naslov: objaveF3[index].data()['naslov'],
+                                opis: objaveF3[index].data()['opis'],
                                 ownerName: user[0].data()['userName'],
-                                ownerId: objaveF2[index].data()['ownerId'],
+                                ownerId: objaveF3[index].data()['ownerId'],
                                 medijakveri: medijakveri,
-                                createdAt: objaveF2[index].data()['createdAt'],
-                                kategorija: objaveF2[index].data()['kategorija'],
-                                dobrovoljci: objaveF2[index].data()['dobrovoljci'],
+                                createdAt: objaveF3[index].data()['createdAt'],
+                                kategorija: objaveF3[index].data()['kategorija'],
+                                dobrovoljci: objaveF3[index].data()['dobrovoljci'],
                                 location: user[0].data()['location'],
                                 brojTel: user[0].data()['broj'],
-                                objavaId: objaveF2[index].id,
+                                objavaId: objaveF3[index].id,
                                 ownerProfileClick: true,
                               );
                             },
