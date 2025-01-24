@@ -117,16 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SafeArea(
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05), // margin horizontal 20px
-            // padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   children: [
-                    SizedBox(height: (medijakveri.size.height - medijakveri.padding.top - (medijakveri.viewInsets.bottom * 2.5)) * 0.1),
+                    SizedBox(height: (medijakveri.size.height - medijakveri.padding.top - (medijakveri.viewInsets.bottom)) * 0.1),
                     Text(
-                      'Prijavite se ',
+                      'Prijavite se',
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                   ],
