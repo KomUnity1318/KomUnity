@@ -120,6 +120,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await Provider.of<MojProvider>(context, listen: false).setCurrentPosition().then((valuE) {
           currentPosition = Provider.of<MojProvider>(context, listen: false).getCurrentPosition;
         });
+        await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+          'location': {
+            'lat': "${currentPosition.latitude}",
+            'long': "${currentPosition.longitude}",
+          },
+        });
+
         await FirebaseAuth.instance.currentUser!.updateDisplayName('${_authData['ime']} ${_authData['prezime']}').then((value) {
           setState(() {
             isLoading = false;
