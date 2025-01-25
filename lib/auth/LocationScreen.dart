@@ -145,181 +145,187 @@ class _LocationScreenState extends State<LocationScreen> {
   @override
   Widget build(BuildContext context) {
     final medijakveri = MediaQuery.of(context);
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          setState(() {
-            markeri = {};
-            lokacijaData['lat'] = '';
-            lokacijaData['long'] = '';
-          });
-        },
-        child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              if (widget.isAppBar)
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
-                  child: CustomAppBar(
-                    pageTitle: Text(
-                      'Promijenite lokaciju',
-                      style: Theme.of(context).textTheme.headlineLarge,
-                    ),
-                    isCenter: true,
-                    prvaIkonica: Icon(
-                      LucideIcons.circleArrowLeft,
-                      size: 30,
-                    ),
-                    prvaIkonicaFunkcija: () {
-                      Navigator.pop(context);
-                    },
-                    drugaIkonica: SizedBox(
-                      height: 15,
-                      width: 15,
-                    ),
-                    drugaIkonicaFunkcija: () {},
-                  ),
-                ),
-              Container(
-                child: Column(
-                  children: [
-                    SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.05),
-                    Text(
-                      'Gdje je Vaš komšiluk?',
-                      style: Theme.of(context).textTheme.displayLarge,
-                    ),
-                    SizedBox(height: 20),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
-                      child: Text(
-                        'Molimo Vas izaberite lokaciju Vaše kuće ili stana.',
-                        style: Theme.of(context).textTheme.headlineLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                children: [
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+      },
+      child: Scaffold(
+        body: GestureDetector(
+          onTap: () {
+            setState(() {
+              markeri = {};
+              lokacijaData['lat'] = '';
+              lokacijaData['long'] = '';
+            });
+          },
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (widget.isAppBar)
                   Container(
-                    height: (medijakveri.size.height - medijakveri.padding.top) * 0.45,
-                    margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
-                    child: isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: GoogleMap(
-                              initialCameraPosition: CameraPosition(
-                                // target: LatLng(43.072267184509066, 19.77565134246493),
-                                target: widget.currentPosition,
-                                zoom: 16.5,
-                              ),
-                              onMapCreated: (GoogleMapController c) {
-                                yourMapController = c;
-                                changeMapMode(yourMapController!);
-                              },
-                              compassEnabled: false,
-                              mapToolbarEnabled: false,
-                              mapType: MapType.normal,
-                              myLocationButtonEnabled: true,
-                              myLocationEnabled: true,
-                              zoomControlsEnabled: false,
-                              onTap: (position) {
-                                setState(() {
-                                  markeri.clear();
-                                  markeri.add(
-                                    Marker(
-                                      markerId: MarkerId(
-                                        DateTime.now().toIso8601String(),
-                                      ),
-                                      position: position,
-                                      icon: BitmapDescriptor.defaultMarker,
-                                    ),
-                                  );
-                                  lokacijaData['lat'] = position.latitude.toString();
-                                  lokacijaData['long'] = position.longitude.toString();
-                                  lokacijaError = '';
-                                });
-                              },
-                              markers: markeri,
-                            ),
-                          ),
-                  ),
-                  SizedBox(height: 5),
-                  if (lokacijaError != '')
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
-                      child: Row(
-                        children: [
-                          Text(
-                            lokacijaError,
-                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                  color: Colors.red,
-                                ),
-                          ),
-                        ],
+                    margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
+                    child: CustomAppBar(
+                      pageTitle: Text(
+                        'Promijenite lokaciju',
+                        style: Theme.of(context).textTheme.headlineLarge,
                       ),
-                    ),
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
-                child: Column(
-                  children: [
-                    Button(
-                      buttonText: "Trenutna lokacija",
-                      borderRadius: 10,
-                      visina: 16,
-                      icon: Icon(
-                        LucideIcons.mapPin,
-                        color: Colors.white,
-                        size: 26,
+                      isCenter: true,
+                      prvaIkonica: Icon(
+                        LucideIcons.circleArrowLeft,
+                        size: 30,
                       ),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      isBorder: false,
-                      funkcija: () {
-                        setState(() {
-                          markeri.clear();
-                          markeri.add(
-                            Marker(
-                              markerId: MarkerId(
-                                DateTime.now().toIso8601String(),
-                              ),
-                              position: widget.currentPosition,
-                              icon: BitmapDescriptor.defaultMarker,
-                            ),
-                          );
-                          lokacijaData['lat'] = widget.currentPosition.latitude.toString();
-                          lokacijaData['long'] = widget.currentPosition.longitude.toString();
-                          lokacijaError = '';
-                        });
+                      prvaIkonicaFunkcija: () {
+                        Navigator.pop(context);
                       },
+                      drugaIkonica: SizedBox(
+                        height: 15,
+                        width: 15,
+                      ),
+                      drugaIkonicaFunkcija: () {},
                     ),
-                    SizedBox(height: 15),
-                    isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : Button(
-                            buttonText: 'Potvrdi',
-                            borderRadius: 10,
-                            visina: 16,
-                            icon: Icon(LucideIcons.circleCheckBig),
-                            backgroundColor: Theme.of(context).colorScheme.secondary,
-                            textColor: Colors.black,
-                            isBorder: true,
-                            funkcija: () {
-                              addLocation();
-                            },
-                          ),
+                  ),
+                Container(
+                  child: Column(
+                    children: [
+                      SizedBox(height: (medijakveri.size.height - medijakveri.padding.top) * 0.05),
+                      Text(
+                        'Gdje je Vaš komšiluk?',
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
+                        child: Text(
+                          'Molimo Vas izaberite lokaciju Vaše kuće ili stana.',
+                          style: Theme.of(context).textTheme.headlineLarge,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    Container(
+                      height: (medijakveri.size.height - medijakveri.padding.top) * 0.45,
+                      margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
+                      child: isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: GoogleMap(
+                                initialCameraPosition: CameraPosition(
+                                  // target: LatLng(43.072267184509066, 19.77565134246493),
+                                  target: widget.currentPosition,
+                                  zoom: 16.5,
+                                ),
+                                onMapCreated: (GoogleMapController c) {
+                                  yourMapController = c;
+                                  changeMapMode(yourMapController!);
+                                },
+                                compassEnabled: false,
+                                mapToolbarEnabled: false,
+                                mapType: MapType.normal,
+                                myLocationButtonEnabled: true,
+                                myLocationEnabled: true,
+                                zoomControlsEnabled: false,
+                                onTap: (position) {
+                                  setState(() {
+                                    markeri.clear();
+                                    markeri.add(
+                                      Marker(
+                                        markerId: MarkerId(
+                                          DateTime.now().toIso8601String(),
+                                        ),
+                                        position: position,
+                                        icon: BitmapDescriptor.defaultMarker,
+                                      ),
+                                    );
+                                    lokacijaData['lat'] = position.latitude.toString();
+                                    lokacijaData['long'] = position.longitude.toString();
+                                    lokacijaError = '';
+                                  });
+                                },
+                                markers: markeri,
+                              ),
+                            ),
+                    ),
+                    SizedBox(height: 5),
+                    if (lokacijaError != '')
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
+                        child: Row(
+                          children: [
+                            Text(
+                              lokacijaError,
+                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Colors.red,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
-              ),
-            ],
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.05),
+                  child: Column(
+                    children: [
+                      Button(
+                        buttonText: "Trenutna lokacija",
+                        borderRadius: 10,
+                        visina: 16,
+                        icon: Icon(
+                          LucideIcons.mapPin,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        isBorder: false,
+                        funkcija: () {
+                          setState(() {
+                            markeri.clear();
+                            markeri.add(
+                              Marker(
+                                markerId: MarkerId(
+                                  DateTime.now().toIso8601String(),
+                                ),
+                                position: widget.currentPosition,
+                                icon: BitmapDescriptor.defaultMarker,
+                              ),
+                            );
+                            lokacijaData['lat'] = widget.currentPosition.latitude.toString();
+                            lokacijaData['long'] = widget.currentPosition.longitude.toString();
+                            lokacijaError = '';
+                          });
+                        },
+                      ),
+                      SizedBox(height: 15),
+                      isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : Button(
+                              buttonText: 'Potvrdi',
+                              borderRadius: 10,
+                              visina: 16,
+                              icon: Icon(LucideIcons.circleCheckBig),
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              textColor: Colors.black,
+                              isBorder: true,
+                              funkcija: () {
+                                addLocation();
+                              },
+                            ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
