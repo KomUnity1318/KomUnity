@@ -149,7 +149,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
               pageBuilder: (context, animation, duration) => LocationScreen(
                 currentPosition: currentPosition,
-                isAppBar: false,
               ),
             ),
           );
