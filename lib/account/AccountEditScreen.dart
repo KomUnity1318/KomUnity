@@ -112,11 +112,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
       return;
     }
     formKey.currentState!.save();
-    // print(_authData['ime']);
-    // print(_authData['prezime']);
-    // print(_authData['email']);
-    // print(_authData['broj']);
-    // print(userData!.id);
+
     try {
       Metode.checkConnection(context: context);
     } catch (e) {
@@ -147,6 +143,21 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
           isDugmeLoading = false;
         });
         Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false);
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Uspješno ste uredili nalog.',
+              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    color: Colors.white,
+                  ),
+            ),
+            duration: const Duration(milliseconds: 1500),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Theme.of(context).colorScheme.tertiary,
+            elevation: 4,
+          ),
+        );
       });
     } catch (e) {
       setState(() {
