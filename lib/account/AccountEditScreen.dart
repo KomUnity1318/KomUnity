@@ -9,6 +9,7 @@ import 'package:komunity/components/CustomAppbar.dart';
 import 'package:komunity/components/InputField.dart';
 import 'package:komunity/components/InputFieldDisabled.dart';
 import 'package:komunity/components/metode.dart';
+import 'package:komunity/main/LocationEditScreen.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -68,7 +69,6 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
           znanjaFokus.add(FocusNode());
         }
       } else {
-        print('DODANO');
         znanjaInput.add(TextEditingController());
         znanjaFokus.add(FocusNode());
       }
@@ -384,8 +384,7 @@ class _AccountEditScreenState extends State<AccountEditScreen> {
                                           child: child,
                                         );
                                       },
-                                      pageBuilder: (context, animation, duration) => LocationScreen(
-                                        isAppBar: true,
+                                      pageBuilder: (context, animation, duration) => LocationEditScreen(
                                         currentPosition: currentPosition,
                                       ),
                                     ),

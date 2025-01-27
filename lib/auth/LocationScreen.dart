@@ -16,11 +16,10 @@ import 'package:provider/provider.dart';
 class LocationScreen extends StatefulWidget {
   static const String routeName = '/LocationScreen';
   final LatLng currentPosition;
-  final bool isAppBar;
+
   const LocationScreen({
     super.key,
     required this.currentPosition,
-    required this.isAppBar,
   });
 
   @override
@@ -99,30 +98,8 @@ class _LocationScreenState extends State<LocationScreen> {
           setState(() {
             isLoading = false;
           });
-          if (widget.isAppBar) {
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-              context,
-              PageRouteBuilder(
-                transitionDuration: const Duration(milliseconds: 500),
-                reverseTransitionDuration: const Duration(milliseconds: 500),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(-1, 0),
-                      end: Offset.zero,
-                    ).animate(
-                      CurvedAnimation(parent: animation, curve: Curves.easeInOutExpo),
-                    ),
-                    child: child,
-                  );
-                },
-                pageBuilder: (context, animation, duration) => AccountEditScreen(),
-              ),
-            );
-          } else {
-            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-          }
+
+          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
         });
       } catch (error) {
         setState(() {
@@ -163,29 +140,6 @@ class _LocationScreenState extends State<LocationScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (widget.isAppBar)
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: medijakveri.size.width * 0.039),
-                    child: CustomAppBar(
-                      pageTitle: Text(
-                        'Promijenite lokaciju',
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      ),
-                      isCenter: true,
-                      prvaIkonica: Icon(
-                        LucideIcons.circleArrowLeft,
-                        size: 30,
-                      ),
-                      prvaIkonicaFunkcija: () {
-                        Navigator.pop(context);
-                      },
-                      drugaIkonica: SizedBox(
-                        height: 15,
-                        width: 15,
-                      ),
-                      drugaIkonicaFunkcija: () {},
-                    ),
-                  ),
                 Container(
                   child: Column(
                     children: [
